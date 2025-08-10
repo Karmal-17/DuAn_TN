@@ -5,8 +5,6 @@
 package ToanBo_KhuyenMai;
 
 import javax.swing.table.DefaultTableModel;
-import ToanBo_KhuyenMai.QL_KhuyenMai;
-import ToanBo_KhuyenMai.KhuyenMai;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -19,7 +17,6 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
@@ -59,6 +56,7 @@ public class QL_ChiTiet_KhuyenMai_Panel extends javax.swing.JPanel {
         });
     }
 
+    // Hiển Thị Khuyến Mãi
     private void hienThiKhuyenMaiTheoTrangThai(boolean trangThai) {
         List<KhuyenMai> danhSachKM = qlkm.timKiemKhuyenMaiTheoTrangThai(trangThai);
         // Xóa dữ liệu bảng cũ
@@ -69,9 +67,10 @@ public class QL_ChiTiet_KhuyenMai_Panel extends javax.swing.JPanel {
         }
     }
 
+    // Chèn Dữ Liệu Vào Trong Bảng
     public void Initable() {
         TableMoDel = new DefaultTableModel();
-        String[] cols = {"Mã KM", "Tên KM", "Mô Tả", "Hình Thức", "Điểm Yêu Cầu ", "Giá Trị", "Ngày Bắt Đầu", "Ngày Kết Thúc", "Ngày Trong Tháng", "Điều Kiện", "Trạng Thái"};
+        String[] cols = {"Mã KM", "Tên KM", "Mô Tả", "Hình Thức", "Giá Trị Yêu Cầu", "Giá Trị", "Ngày Bắt Đầu", "Ngày Kết Thúc", "Trạng Thái"};
         TableMoDel.setColumnIdentifiers(cols);
         tbl_DanhSachKM.setModel(TableMoDel);
     }
@@ -84,6 +83,7 @@ public class QL_ChiTiet_KhuyenMai_Panel extends javax.swing.JPanel {
         }
     }
 
+    // Lọc Khuyến Mãi Theo Thời Gian
     public void Loc_KM() {
         try {
             DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -139,40 +139,8 @@ public class QL_ChiTiet_KhuyenMai_Panel extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Lỗi định dạng ngày hoặc truy vấn: " + e.getMessage());
         }
     }
-//    public void TimKiem_KhuyenMai() {
-//        String TuKhoa_TK = txt_VuiLongNhap.getText().trim();
-//        if (TuKhoa_TK.isEmpty()) {
-//            JOptionPane.showMessageDialog(this, "Vui lòng nhập từ khoá tìm kiếm!");
-//            return;
-//        }
-//        if ((!rdo_TheoMa.isSelected() && !rdo_TheoTen.isSelected())) {
-//            JOptionPane.showMessageDialog(this, "Vui Lòng Chọn Kiểu Tìm Kiếm Trước Khi Tìm Kiếm Khuyến Mãi.");
-//            return;
-//        }
-//
-//        List<KhuyenMai> danhSachTim = new ArrayList<>();
-//
-//        if (rdo_TheoMa.isSelected()) {
-//            danhSachTim = qlkm.TimKiem_TheoMa(TuKhoa_TK);
-//        } else if (rdo_TheoTen.isSelected()) {
-//            danhSachTim = qlkm.TimKiem_TheoTen(TuKhoa_TK);
-//        } else {
-//            JOptionPane.showMessageDialog(this, "Vui lòng chọn kiểu tìm kiếm (Mã hoặc Tên).");
-//            return;
-//        }
-//
-//        DefaultTableModel model = (DefaultTableModel) tbl_DanhSachKM.getModel();
-//        model.setRowCount(0); // Xoá bảng cũ
-//
-//        for (KhuyenMai km : danhSachTim) {
-//            model.addRow(qlkm.GetRow(km));
-//        }
-//
-//        if (danhSachTim.isEmpty()) {
-//            JOptionPane.showMessageDialog(this, "Không tìm thấy khuyến mãi nào phù hợp.");
-//        }
-//    }
 
+    // Tìm Kiếm Khuyến Mãi
     public void TimKiem() {
         txt_VuiLongNhap.addKeyListener(new KeyAdapter() {
             public void keyReleased(KeyEvent e) {
@@ -212,24 +180,23 @@ public class QL_ChiTiet_KhuyenMai_Panel extends javax.swing.JPanel {
 
         KhuyenMai km = qlkm.LayChiTietKM(maKM);
         if (km != null) {
-            String trangThaiText = km.getTrangThai() ? "Hiệu lực" : "Hết hạn";
+            String trangThaiText = km.isTrangThai() ? "Hiệu lực" : "Hết hạn";
 
             model.addRow(new Object[]{
                 km.getMa_KM(),
                 km.getTen_KM(),
                 km.getMoTa_KM(),
                 km.getHinhThuc_KM(),
-                km.getDiemYeuCau_KM(),
+                km.getGiaTri_YeuCau_KM(),
                 km.getGiaTri_KM(),
                 km.getNgay_BD(),
                 km.getNgay_KT(),
-                km.getNgayTrongThang_KM(),
-                km.getDieuKien_KM(),
                 trangThaiText
             });
         }
     }
 
+    // Chi Tiết Khuyến Mãi
     public void ShowDetail() {
         InDex = tbl_DanhSachKM.getSelectedRow();
         if (InDex >= 0) {
@@ -242,13 +209,11 @@ public class QL_ChiTiet_KhuyenMai_Panel extends javax.swing.JPanel {
                     + "📛 Tên khuyến mãi: " + km.getTen_KM() + "\n"
                     + "📦 Hình thức: " + km.getHinhThuc_KM() + "\n"
                     + "📝 Mô tả: " + km.getMoTa_KM() + "\n"
-                    + "🏆 Điểm yêu cầu: " + km.getDiemYeuCau_KM() + "\n"
+                    + "🏆 Giá Trị Yêu Cầu: " + km.getGiaTri_YeuCau_KM() + "\n"
                     + "💸 Giá trị: " + km.getGiaTri_KM() + "\n"
                     + "📅 Ngày bắt đầu: " + km.getNgay_BD().toLocalDate().format(formatter) + "\n"
                     + "📅 Ngày kết thúc: " + km.getNgay_KT().toLocalDate().format(formatter) + "\n"
-                    + "📆 Ngày trong tháng: " + km.getNgayTrongThang_KM() + "\n"
-                    + "📋 Điều kiện: " + km.getDieuKien_KM() + "\n"
-                    + "🚦 Trạng thái: " + (km.getTrangThai() ? "Đang hoạt động" : "Không hoạt động");
+                    + "🚦 Trạng thái: " + (km.isTrangThai() ? "Đang hoạt động" : "Không hoạt động");
 
             JOptionPane.showMessageDialog(this, info, "Chi tiết khuyến mãi", JOptionPane.INFORMATION_MESSAGE);
         } else {

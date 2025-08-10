@@ -4,6 +4,7 @@
  */
 package View_JFrame;
 
+import DBConnect.Chua_Bien;
 import javax.swing.ImageIcon;
 import ToanBo_TaiKhoan.QL_Login;
 import ToanBo_TaiKhoan.Tai_Khoan;
@@ -33,19 +34,64 @@ public class Login extends javax.swing.JFrame {
     ImageIcon iconHide = new ImageIcon(getClass().getResource("/Icon/Close_Eye.png"));
     ImageIcon iconShow = new ImageIcon(getClass().getResource("/Icon/Opend_Eye.png"));
 
+//    public void DangNhap() {
+//        String Email = txt_NhapEmail.getText().trim();
+//        String Ma_TK = txt_NhapMK.getText().trim();
+//        Chua_Bien.Ma_TK = Ma_TK;
+//        String vaiTro = qllg.login(Email, Ma_TK);
+    ////        TaiKhoan_4_O taiKhoan = qllg.getTaiKhoanTheoEmail(Email);
+//        int Choice = JOptionPane.showConfirmDialog(this, "Bạn Có Xác Nhận Đăng Nhập Với:"
+//                + "\n Mật Khẩu: " + Ma_TK
+//                + "\n Email: " + Email
+//                + "\n Hay Không ?", "Xác Nhận Đăng Nhập.", JOptionPane.YES_NO_OPTION);
+//        if (Choice == JOptionPane.YES_OPTION) {
+//            if (vaiTro != null) {
+//                JOptionPane.showMessageDialog(this,
+//                        "Đăng nhập thành công!"
+//                        + "\nTài khoản: " + Email
+//                        + "\nVai trò: " + vaiTro);
+//
+//                // Chuyển giao diện theo vai trò
+//                switch (vaiTro) {
+//                    case "Quản Lý":
+//                        new TrangChu_NQL().setVisible(true);
+//                        break;
+//                    case "Nhân Viên":
+//                        new TrangChu_NV().setVisible(true);
+//                        break;
+////            case "KH": new GiaoDienKhachHang().setVisible(true); break;
+//                    default:
+//                        JOptionPane.showMessageDialog(this, "Vai trò không xác định!");
+//                }
+//
+//                this.dispose(); // Đóng form đăng nhập
+//            } else {
+//                JOptionPane.showMessageDialog(this, "Đăng nhập thất bại! Email hoặc mã không đúng.");
+//                return;
+//            }
+//        }
+//    }
     public void DangNhap() {
-
         String Email = txt_NhapEmail.getText().trim();
         String Ma_TK = txt_NhapMK.getText().trim();
+        Chua_Bien.Ma_TK = Ma_TK;
 
         String vaiTro = qllg.login(Email, Ma_TK);
-//        TaiKhoan_4_O taiKhoan = qllg.getTaiKhoanTheoEmail(Email);
+
         int Choice = JOptionPane.showConfirmDialog(this, "Bạn Có Xác Nhận Đăng Nhập Với:"
                 + "\n Mật Khẩu: " + Ma_TK
                 + "\n Email: " + Email
                 + "\n Hay Không ?", "Xác Nhận Đăng Nhập.", JOptionPane.YES_NO_OPTION);
+
         if (Choice == JOptionPane.YES_OPTION) {
             if (vaiTro != null) {
+                // ✅ Cập nhật trạng thái tài khoản thành "Đang hoạt động"
+                int ketQua = qllg.capNhatTrangThai(Ma_TK, true); // 1 = Đang hoạt động
+                if (ketQua <= 0) {
+                    JOptionPane.showMessageDialog(this, "Không thể cập nhật trạng thái tài khoản!");
+                    return;
+                }
+
                 JOptionPane.showMessageDialog(this,
                         "Đăng nhập thành công!"
                         + "\nTài khoản: " + Email
@@ -59,7 +105,6 @@ public class Login extends javax.swing.JFrame {
                     case "Nhân Viên":
                         new TrangChu_NV().setVisible(true);
                         break;
-//            case "KH": new GiaoDienKhachHang().setVisible(true); break;
                     default:
                         JOptionPane.showMessageDialog(this, "Vai trò không xác định!");
                 }
@@ -67,7 +112,6 @@ public class Login extends javax.swing.JFrame {
                 this.dispose(); // Đóng form đăng nhập
             } else {
                 JOptionPane.showMessageDialog(this, "Đăng nhập thất bại! Email hoặc mã không đúng.");
-                return;
             }
         }
     }
@@ -88,7 +132,6 @@ public class Login extends javax.swing.JFrame {
 //            this.dispose();
 //        }
 //    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

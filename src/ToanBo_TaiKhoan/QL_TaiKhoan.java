@@ -413,4 +413,81 @@ public class QL_TaiKhoan {
 
         return ketQua;
     }
+
+    // Lấy Ảnh Của Tài Khoản Để Cho Vào Cái Phần Ảnh Trên Trang Chủ Của Tài Khoản
+    public String layDuongDanAnhTaiKhoan(String maTK) {
+        String sql = "SELECT ANH_TK FROM TAIKHOAN WHERE MA_TK = ?";
+        try {
+            Connection connection = conn.DBConnect();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, maTK);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getString("ANH_TK"); // Trả về đường dẫn ảnh
+            }
+
+        } catch (Exception e) {
+            System.out.println("❌ Lỗi khi lấy đường dẫn ảnh: " + e.getMessage());
+        }
+        return null;
+    }
+
+    // Lấy Thông Tin Tài Khoản Khi Mình Đăng Nhập
+    public Tai_Khoan layThongTinTaiKhoan(String maTK) {
+        String sql = "SELECT TENTAIKHOAN , SDT , EMAIL , DIACHI , VAITRO , NGAYDANGKY , ANH_TK , TRANGTHAI FROM TAIKHOAN WHERE MA_TK = ?";
+        try {
+            Connection connection = conn.DBConnect();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, maTK);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                String tenTK = rs.getString("TENTAIKHOAN");
+                String sdt = rs.getString("SDT");
+                String email = rs.getString("EMAIL");
+                String diaChi = rs.getString("DIACHI");
+                String vaiTro = rs.getString("VAITRO");
+                Date ngayDK = rs.getDate("NGAYDANGKY");
+                String anhTK = rs.getString("ANH_TK");
+                boolean trangThai = rs.getBoolean("TRANGTHAI");
+
+                return new Tai_Khoan(maTK, tenTK, sdt, email, diaChi, vaiTro, ngayDK, anhTK, trangThai);
+            }
+
+        } catch (Exception e) {
+            System.out.println("❌ Lỗi khi lấy thông tin tài khoản: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public int CapNhat_ThongtinCaNhan(Tai_Khoan tk, String Ma_Cu) {
+        String sql = "UPDATE TAIKHOAN SET \n"
+                + "       MA_TK = ?, TENTAIKHOAN = ?, SDT = ?, EMAIL = ?, DIACHI = ?, \n"
+                + "       VAITRO = ?, NGAYDANGKY = ?, ANH_TK = ?, TRANGTHAI = ? \n"
+                + "       WHERE MA_TK = ?";
+        try {
+            Connection connection = conn.DBConnect();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, tk.getMa_TK());
+            ps.setString(2, tk.getTen_TK());
+            ps.setString(3, tk.getSDT_TK());
+            ps.setString(4, tk.getEmail_TK());
+            ps.setString(5, tk.getDiaChi_TK());
+            ps.setString(6, tk.getVaiTro_TK());
+            ps.setDate(7, tk.getNgay_DK_TK());
+            ps.setString(8, tk.getAnh_TK());
+            ps.setBoolean(9, tk.getTrangThai_TK());
+            ps.setString(10, Ma_Cu); // Mã tài khoản cũ để xác định dòng cần sửa
+
+            if (ps.executeUpdate() > 0) {
+                return 1;
+            }
+            // Trả về số dòng bị ảnh hưởng (1 nếu thành công)
+        } catch (Exception e) {
+            System.out.println("❌ Lỗi khi cập nhật tài khoản: " + e.getMessage());
+        }
+        return 0;
+    }
+
 }

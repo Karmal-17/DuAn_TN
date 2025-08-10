@@ -147,7 +147,7 @@
                           <Component id="txt_NgayTaoKH" min="-2" pref="35" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="jLabel6" min="-2" pref="26" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
+                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="txt_DiemTichLuy" min="-2" pref="38" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -230,6 +230,9 @@
         </Component>
         <Component class="javax.swing.JRadioButton" name="rdo_KhachThuong">
           <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="btg_LoaiKH"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Kh&#xe1;ch Th&#x1b0;&#x1edd;ng"/>
           </Properties>
           <Events>
@@ -238,11 +241,17 @@
         </Component>
         <Component class="javax.swing.JRadioButton" name="rdo_KhachVIP">
           <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="btg_LoaiKH"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Kh&#xe1;ch VIP"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JRadioButton" name="rdo_KhachLuxury">
           <Properties>
+            <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+              <ComponentRef name="btg_LoaiKH"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Kh&#xe1;ch Luxury"/>
           </Properties>
           <Events>

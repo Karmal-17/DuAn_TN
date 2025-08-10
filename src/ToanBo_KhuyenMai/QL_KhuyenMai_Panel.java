@@ -268,15 +268,15 @@ public class QL_KhuyenMai_Panel extends javax.swing.JPanel {
             rdo_KhongHoatDong.setSelected(true);
         }
 
-        KhuyenMai km = new KhuyenMai(Ma_KM, Ten_KM, MoTa_KM, HinhThuc_KM, DiemYeuCau, GiaTri_KM, Ngay_BD_KM, Ngay_KT_KM, NgayTrongThang_KM, DieuKien_KM, TrangThai_KM);
-        int ReSult = qlkm.Them_KM(km);
-
-        if (ReSult == 1) {
-            JOptionPane.showMessageDialog(this, "Thêm Thành Công Khuyến Mãi.");
-        } else {
-            JOptionPane.showMessageDialog(this, "Thêm Khuyến Mãi Thất Bại.");
-            return;
-        }
+//        KhuyenMai km = new KhuyenMai(Ma_KM, Ten_KM, MoTa_KM, HinhThuc_KM, DiemYeuCau, GiaTri_KM, Ngay_BD_KM, Ngay_KT_KM, NgayTrongThang_KM, DieuKien_KM, TrangThai_KM);
+//        int ReSult = qlkm.Them_KM(km);
+//
+//        if (ReSult == 1) {
+//            JOptionPane.showMessageDialog(this, "Thêm Thành Công Khuyến Mãi.");
+//        } else {
+//            JOptionPane.showMessageDialog(this, "Thêm Khuyến Mãi Thất Bại.");
+//            return;
+//        }
     }
 
     public void Xoa_KM() {
@@ -332,53 +332,53 @@ public class QL_KhuyenMai_Panel extends javax.swing.JPanel {
 
             boolean TrangThai = rdo_HoatDong.isSelected();
 
-            KhuyenMai km = new KhuyenMai(Ma_KM, Ten_KM, MoTa_KM, HìnhThuc_KM, DiemYeuCau, GiaTri_KM, Ngay_BD_KM, Ngay_KT_KM, NgayTrongThang_KM, DieuKien_KM, TrangThai);
-
-            String TheoMa_KM = qlkm.Get_All().get(InDex).getMa_KM();
-
-            int ReSult = qlkm.Sua_KM(km, TheoMa_KM);
-            if (ReSult == 1) {
-                JOptionPane.showMessageDialog(this, "Sửa Khuyến Mãi:"
-                        + "\n Mã Khuyến Mãi Cũ: " + TheoMa_KM
-                        + "\n Mã Khuyễn Mãi Mới: " + Ma_KM + "\n Tên Khuyến Mãi Mới: " + Ten_KM + "\n Thành Công.");
-            } else {
-                JOptionPane.showMessageDialog(this, "Sửa Khuyến Mãi Thất Bại.");
-                return;
-            }
+//            KhuyenMai km = new KhuyenMai(Ma_KM, Ten_KM, MoTa_KM, HìnhThuc_KM, DiemYeuCau, GiaTri_KM, Ngay_BD_KM, Ngay_KT_KM, NgayTrongThang_KM, DieuKien_KM, TrangThai);
+//
+//            String TheoMa_KM = qlkm.Get_All().get(InDex).getMa_KM();
+//
+//            int ReSult = qlkm.Sua_KM(km, TheoMa_KM);
+//            if (ReSult == 1) {
+//                JOptionPane.showMessageDialog(this, "Sửa Khuyến Mãi:"
+//                        + "\n Mã Khuyến Mãi Cũ: " + TheoMa_KM
+//                        + "\n Mã Khuyễn Mãi Mới: " + Ma_KM + "\n Tên Khuyến Mãi Mới: " + Ten_KM + "\n Thành Công.");
+//            } else {
+//                JOptionPane.showMessageDialog(this, "Sửa Khuyến Mãi Thất Bại.");
+//                return;
+//            }
         } else {
             JOptionPane.showMessageDialog(this, "Vui Lòng Chọn Dữ Liệu Trong Bảng Khuyến Mãi Để Xoá Khuyến Mãi.");
             return;
         }
     }
 
-    public void ShowDetail() {
-        InDex = tbl_KhuyenMai.getSelectedRow();
-        if (InDex >= 0) {
-            KhuyenMai km = qlkm.Get_All().get(InDex);
-
-            txt_Ma_KM.setText(km.getMa_KM());
-            txt_Ten_KM.setText(km.getTen_KM());
-            txt_MoTa_KM.setText(km.getMoTa_KM());
-            txt_HinhThuc_KM.setText(km.getHinhThuc_KM());
-            txt_DiemYeuCau_KM.setText(String.valueOf(km.getDiemYeuCau_KM()));
-            txt_GiaTri_KM.setText(String.valueOf(km.getGiaTri_KM()));
-
-            // Định dạng ngày thành chuỗi dd/MM/yyyy
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            txt_NgayBatDau_KM.setText(km.getNgay_BD().toLocalDate().format(formatter));
-            txt_NgayKetThuc_KM.setText(km.getNgay_KT().toLocalDate().format(formatter));
-
-            txt_NgayTrongThang_KM.setText(km.getNgayTrongThang_KM());
-            txt_DieuKien_KM.setText(km.getDieuKien_KM());
-
-            // Hiển thị trạng thái bằng radio
-            if (km.getTrangThai()) {
-                rdo_HoatDong.setSelected(true);
-            } else {
-                rdo_KhongHoatDong.setSelected(true);
-            }
-        }
-    }
+//    public void ShowDetail() {
+//        InDex = tbl_KhuyenMai.getSelectedRow();
+//        if (InDex >= 0) {
+//            KhuyenMai km = qlkm.Get_All().get(InDex);
+//
+//            txt_Ma_KM.setText(km.getMa_KM());
+//            txt_Ten_KM.setText(km.getTen_KM());
+//            txt_MoTa_KM.setText(km.getMoTa_KM());
+//            txt_HinhThuc_KM.setText(km.getHinhThuc_KM());
+//            txt_DiemYeuCau_KM.setText(String.valueOf(km.getDiemYeuCau_KM()));
+//            txt_GiaTri_KM.setText(String.valueOf(km.getGiaTri_KM()));
+//
+//            // Định dạng ngày thành chuỗi dd/MM/yyyy
+//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+//            txt_NgayBatDau_KM.setText(km.getNgay_BD().toLocalDate().format(formatter));
+//            txt_NgayKetThuc_KM.setText(km.getNgay_KT().toLocalDate().format(formatter));
+//
+//            txt_NgayTrongThang_KM.setText(km.getNgayTrongThang_KM());
+//            txt_DieuKien_KM.setText(km.getDieuKien_KM());
+//
+//            // Hiển thị trạng thái bằng radio
+//            if (km.getTrangThai()) {
+//                rdo_HoatDong.setSelected(true);
+//            } else {
+//                rdo_KhongHoatDong.setSelected(true);
+//            }
+//        }
+//    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -736,7 +736,7 @@ public class QL_KhuyenMai_Panel extends javax.swing.JPanel {
 
     private void tbl_KhuyenMaiMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_KhuyenMaiMouseClicked
         // TODO add your handling code here:
-        ShowDetail();
+//        ShowDetail();
     }//GEN-LAST:event_tbl_KhuyenMaiMouseClicked
 
 

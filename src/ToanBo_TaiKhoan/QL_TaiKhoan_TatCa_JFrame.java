@@ -73,6 +73,18 @@ public class QL_TaiKhoan_TatCa_JFrame extends javax.swing.JFrame {
         lb_UpAnh.setText("Null");    // Ghi lại chữ nếu muốn
         PathAnh = null;              // Đặt lại biến ảnh (tránh lưu nhầm)
         FillToTable();
+
+        rdo_HoatDong.setSelected(true);
+        rdo_QuanLy.setSelected(false);
+        rdo_NhanVien.setSelected(false);
+
+        // ✅ Mở lại chức năng sửa vai trò
+        rdo_QuanLy.setEnabled(true);
+        rdo_NhanVien.setEnabled(true);
+
+        // ✅ Mở lại nút xóa
+        btn_XoaDL.setEnabled(true);
+
     }
 
     // Thêm Dữ Liệu Tai Khoản
@@ -261,10 +273,25 @@ public class QL_TaiKhoan_TatCa_JFrame extends javax.swing.JFrame {
         }
 
         // Hiển thị VaiTrò
+        // Hiển thị VaiTrò
         if (tk.getVaiTro_TK().equalsIgnoreCase("Quản Lý")) {
             rdo_QuanLy.setSelected(true);
+
+            // 🔒 Khóa chức năng sửa vai trò
+            rdo_QuanLy.setEnabled(false);
+            rdo_NhanVien.setEnabled(false);
+
+            // ❌ Khóa nút xóa
+            btn_XoaDL.setEnabled(false);
         } else {
             rdo_NhanVien.setSelected(true);
+
+            // ✅ Cho phép sửa vai trò
+            rdo_QuanLy.setEnabled(true);
+            rdo_NhanVien.setEnabled(true);
+
+            // ✅ Cho phép xóa
+            btn_XoaDL.setEnabled(true);
         }
 
         // Ảnh đại diện

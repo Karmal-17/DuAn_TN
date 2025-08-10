@@ -115,11 +115,11 @@ public class QL_DoanhThu {
 
     public float tinhTongLoiNhuanTrongNgayHomNay() {
         float tongLoiNhuan = 0;
-        String sql = "SELECT SUM(sp.DONGIA * 0.3) AS LoiNhuanTrongNgay\n"
-                + "FROM SANPHAM sp\n"
-                + "JOIN CTHOADON cthd ON sp.MA_SP = cthd.MA_SP\n"
-                + "JOIN HOADON hd ON cthd.MA_HD = hd.MA_HD\n"
-                + "WHERE CONVERT(DATE, hd.NGAYLAP) = CONVERT(DATE, GETDATE())";
+        String sql = "SELECT SUM(cthd.SOLUONG * (sp.DONGIA * 0.3)) AS LoiNhuanTrongNgay\n"
+                + "                FROM SANPHAM sp\n"
+                + "                JOIN CTHOADON cthd ON sp.MA_SP = cthd.MA_SP\n"
+                + "                JOIN HOADON hd ON cthd.MA_HD = hd.MA_HD\n"
+                + "                WHERE CONVERT(DATE, hd.NGAYLAP) = CONVERT(DATE, GETDATE())";
 
         try {
             Connection conect = conn.DBConnect();
@@ -136,13 +136,13 @@ public class QL_DoanhThu {
         return tongLoiNhuan;
     }
 
-    public List<BieuDo_3_O> layThongKeTheoNgay(Date Ngay_BD,Date Ngay_KT) {
+    public List<BieuDo_3_O> layThongKeTheoNgay(Date Ngay_BD, Date Ngay_KT) {
         List<BieuDo_3_O> danhSach = new ArrayList<>();
         String sql = """
         SELECT 
             FORMAT(hd.NGAYLAP, 'dd-MM') AS NGAY,
             SUM(hd.TONGTIEN) AS DOANHTHU,
-            SUM(cthd.SOLUONG * (sp.DONGIA * 0.2)) AS LOINHUAN
+            SUM(cthd.SOLUONG * (sp.DONGIA * 0.3)) AS LOINHUAN
         FROM HOADON hd
         JOIN CTHOADON cthd ON hd.MA_HD = cthd.MA_HD
         JOIN SANPHAM sp ON cthd.MA_SP = sp.MA_SP

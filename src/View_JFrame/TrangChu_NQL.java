@@ -4,6 +4,7 @@
  */
 package View_JFrame;
 
+import DBConnect.Chua_Bien;
 import ToanBo_KhuyenMai.QL_ChiTiet_KhuyenMai_Panel;
 import ToanBo_TaiKhoan.QL_TaiKhoan_TatCaPanel;
 import ToanBo_TaiKhoan.QL_ChiTet_TaiKhoan_Panel;
@@ -15,7 +16,15 @@ import javax.swing.JOptionPane;
 import ToanBo_BanHang.QL_BanHang_Panel;
 import ToanBo_KhachHang.QL_KhachHang_TimKiem_Panel;
 import ToanBo_NguyenLieu.QL_ChiTiet_NguyenLieu;
+import ToanBo_TaiKhoan.QL_Login;
+import ToanBo_TaiKhoan.Tai_Khoan;
 import ToanBo_ThongKe.QL_ThongKe_DoanhThu_Panel;
+import javax.swing.ImageIcon;
+import ToanBo_TaiKhoan.QL_TaiKhoan;
+import ToanBo_TaiKhoan.ThongTinCaNhan;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.io.File;
 
 /**
  *
@@ -38,8 +47,45 @@ public class TrangChu_NQL extends javax.swing.JFrame {
 
         btn_KeHang.setEnabled(false);
         btn_LichSu.setEnabled(false);
-        btn_CaiDat.setEnabled(false);
-        btn_ThongTinCaNhap.setEnabled(false);
+
+        // Hiện Ảnh Cho Tài KHoản
+        hienThiAnhTaiKhoan();
+        // Hiện Thông Tin Cá Nhân
+        CaiDat.setVisible(false); // Ẩn menu khi khởi động
+        btn_CaiDat.addActionListener(e -> {
+            boolean hienMenu = btn_CaiDat.isSelected();
+            CaiDat.setVisible(hienMenu);
+        });
+    }
+
+    public void hienThiAnhTaiKhoan() {
+        QL_TaiKhoan dao = new QL_TaiKhoan();
+        String maTK = Chua_Bien.Ma_TK; // Mã tài khoản hiện tại
+
+        String duongDanAnh = dao.layDuongDanAnhTaiKhoan(maTK); // DAO trả về String
+
+        int width = lb_HienThiAnh.getWidth();
+        int height = lb_HienThiAnh.getHeight();
+
+        if (duongDanAnh != null && !duongDanAnh.isEmpty()) {
+            File file = new File(duongDanAnh);
+            if (file.exists()) {
+                ImageIcon icon = new ImageIcon(duongDanAnh);
+                Image img = icon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+                lb_HienThiAnh.setIcon(new ImageIcon(img));
+            } else {
+                System.out.println("⚠️ Đường dẫn ảnh không tồn tại: " + duongDanAnh);
+                hienThiAnhMacDinh(width, height);
+            }
+        } else {
+            hienThiAnhMacDinh(width, height);
+        }
+    }
+
+    private void hienThiAnhMacDinh(int width, int height) {
+        ImageIcon defaultIcon = new ImageIcon("src/icon/default-avatar.png");
+        Image imgDefault = defaultIcon.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        lb_HienThiAnh.setIcon(new ImageIcon(imgDefault));
     }
 
 //    private void hienThiThongTinNguoiDung() {
@@ -104,6 +150,7 @@ public class TrangChu_NQL extends javax.swing.JFrame {
         CaiDat = new javax.swing.JPanel();
         btn_ThongTinCaNhap = new javax.swing.JButton();
         btn_DangXuat = new javax.swing.JButton();
+        btn_ThongTinCaNhap1 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         btn_CaiDat = new javax.swing.JToggleButton();
         jPanel4 = new javax.swing.JPanel();
@@ -250,7 +297,14 @@ public class TrangChu_NQL extends javax.swing.JFrame {
         lb_DanhMuc.setFont(new java.awt.Font("Consolas", 1, 24)); // NOI18N
         lb_DanhMuc.setText("Welcome to  Fake AL Fresco’s");
 
-        btn_ThongTinCaNhap.setText("Thông Tin Cá Nhân");
+        btn_ThongTinCaNhap.setBackground(new java.awt.Color(255, 204, 204));
+        btn_ThongTinCaNhap.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btn_ThongTinCaNhap.setText("Cá Nhân");
+        btn_ThongTinCaNhap.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_ThongTinCaNhapActionPerformed(evt);
+            }
+        });
 
         btn_DangXuat.setText("Đăng Xuất");
         btn_DangXuat.addActionListener(new java.awt.event.ActionListener() {
@@ -259,6 +313,10 @@ public class TrangChu_NQL extends javax.swing.JFrame {
             }
         });
 
+        btn_ThongTinCaNhap1.setBackground(new java.awt.Color(204, 255, 204));
+        btn_ThongTinCaNhap1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btn_ThongTinCaNhap1.setText("Mã QR");
+
         javax.swing.GroupLayout CaiDatLayout = new javax.swing.GroupLayout(CaiDat);
         CaiDat.setLayout(CaiDatLayout);
         CaiDatLayout.setHorizontalGroup(
@@ -266,40 +324,36 @@ public class TrangChu_NQL extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, CaiDatLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(CaiDatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btn_DangXuat, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
-                    .addComponent(btn_ThongTinCaNhap, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(btn_DangXuat, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_ThongTinCaNhap, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_ThongTinCaNhap1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         CaiDatLayout.setVerticalGroup(
             CaiDatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(CaiDatLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btn_ThongTinCaNhap, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btn_DangXuat, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(184, Short.MAX_VALUE))
+                .addComponent(btn_ThongTinCaNhap, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(20, 20, 20)
+                .addComponent(btn_ThongTinCaNhap1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btn_DangXuat, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(146, Short.MAX_VALUE))
         );
 
         btn_CaiDat.setText("Cài Đặt");
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Tài Khoản"));
 
-        lb_HienThiAnh.setText("null");
-
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lb_HienThiAnh, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(lb_HienThiAnh, javax.swing.GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(lb_HienThiAnh, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(lb_HienThiAnh, javax.swing.GroupLayout.DEFAULT_SIZE, 131, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -340,11 +394,11 @@ public class TrangChu_NQL extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(TrangChungChuyen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(6, 6, 6)
-                        .addComponent(CaiDat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(CaiDat, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -438,12 +492,20 @@ public class TrangChu_NQL extends javax.swing.JFrame {
 
     private void btn_DangXuatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_DangXuatActionPerformed
         // TODO add your handling code here:
+        QL_Login qllg = new QL_Login();
         int confirm = JOptionPane.showConfirmDialog(this,
                 "Bạn có chắc chắn muốn đăng xuất?",
                 "Xác nhận",
                 JOptionPane.YES_NO_OPTION);
 
         if (confirm == JOptionPane.YES_OPTION) {
+            // ✅ Cập nhật trạng thái tài khoản về "Không hoạt động"
+            int ketQua = qllg.capNhatTrangThai(Chua_Bien.Ma_TK, false); // 0 = Không hoạt động
+            if (ketQua <= 0) {
+                JOptionPane.showMessageDialog(this, "Không thể cập nhật trạng thái tài khoản!");
+                return;
+            }
+
             this.dispose(); // đóng giao diện hiện tại
             new Login().setVisible(true); // mở lại form đăng nhập
         }
@@ -467,6 +529,13 @@ public class TrangChu_NQL extends javax.swing.JFrame {
     private void btn_KeHangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_KeHangActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btn_KeHangActionPerformed
+
+    private void btn_ThongTinCaNhapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ThongTinCaNhapActionPerformed
+        // TODO add your handling code here:
+        ThongTinCaNhan tncn = new ThongTinCaNhan();
+        tncn.setVisible(true); // Hiển thị JFrame
+        tncn.setLocationRelativeTo(null); // Canh giữa màn hình (tuỳ chọn)
+    }//GEN-LAST:event_btn_ThongTinCaNhapActionPerformed
 
     /**
      * @param args the command line arguments
@@ -520,6 +589,7 @@ public class TrangChu_NQL extends javax.swing.JFrame {
     private javax.swing.JButton btn_TaiKhoan;
     private javax.swing.JButton btn_ThongKeDoanhThu;
     private javax.swing.JButton btn_ThongTinCaNhap;
+    private javax.swing.JButton btn_ThongTinCaNhap1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;

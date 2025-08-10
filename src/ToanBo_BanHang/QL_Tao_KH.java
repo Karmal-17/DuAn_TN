@@ -178,6 +178,7 @@ public class QL_Tao_KH extends javax.swing.JFrame {
 
         jLabel5.setText("Loại KH:");
 
+        btg_LoaiKH.add(rdo_KhachThuong);
         rdo_KhachThuong.setText("Khách Thường");
         rdo_KhachThuong.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -185,8 +186,10 @@ public class QL_Tao_KH extends javax.swing.JFrame {
             }
         });
 
+        btg_LoaiKH.add(rdo_KhachVIP);
         rdo_KhachVIP.setText("Khách VIP");
 
+        btg_LoaiKH.add(rdo_KhachLuxury);
         rdo_KhachLuxury.setText("Khách Luxury");
         rdo_KhachLuxury.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -271,7 +274,7 @@ public class QL_Tao_KH extends javax.swing.JFrame {
                         .addComponent(txt_NgayTaoKH, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(txt_DiemTichLuy, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(22, 22, 22)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -360,14 +363,6 @@ public class QL_Tao_KH extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_Ma_KHActionPerformed
 
-    private void rdo_KhachThuongActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdo_KhachThuongActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_rdo_KhachThuongActionPerformed
-
-    private void rdo_KhachLuxuryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdo_KhachLuxuryActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_rdo_KhachLuxuryActionPerformed
-
     private void btn_LamMoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_LamMoiActionPerformed
         // TODO add your handling code here:
         LamMoi();
@@ -382,6 +377,14 @@ public class QL_Tao_KH extends javax.swing.JFrame {
         // TODO add your handling code here:
         dispose();
     }//GEN-LAST:event_btn_DongTrangActionPerformed
+
+    private void rdo_KhachThuongActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdo_KhachThuongActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rdo_KhachThuongActionPerformed
+
+    private void rdo_KhachLuxuryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdo_KhachLuxuryActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rdo_KhachLuxuryActionPerformed
 
     /**
      * @param args the command line arguments

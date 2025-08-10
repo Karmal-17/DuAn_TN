@@ -37,14 +37,12 @@ public class QL_KhuyenMai {
                 String Ten_KM = rs.getString(2);
                 String HinhThuc_KM = rs.getString(3);
                 String MoTa_KM = rs.getString(4);
-                int DiemYeuCau_KM = rs.getInt(5);
+                float GiaTri_YeuCau_KM = rs.getFloat(5);
                 float GiaTri_KM = rs.getFloat(6);
                 Date Ngay_BD_KM = rs.getDate(7);
                 Date Ngay_KT_KM = rs.getDate(8);
-                String NgayTrongThang_KM = rs.getString(9);
-                String DieuKien_KM = rs.getString(10);
-                boolean TrangThai_KM = rs.getBoolean(11);
-                KhuyenMai km = new KhuyenMai(Ma_KM, Ten_KM, HinhThuc_KM, MoTa_KM, DiemYeuCau_KM, GiaTri_KM, Ngay_BD_KM, Ngay_KT_KM, NgayTrongThang_KM, DieuKien_KM, TrangThai_KM);
+                boolean TrangThai_KM = rs.getBoolean(9);
+                KhuyenMai km = new KhuyenMai(Ma_KM, Ten_KM, HinhThuc_KM, MoTa_KM, GiaTri_YeuCau_KM, GiaTri_KM, Ngay_BD_KM, Ngay_KT_KM, TrangThai_KM);
                 List_KM.add(km);
             }
         } catch (Exception e) {
@@ -58,20 +56,18 @@ public class QL_KhuyenMai {
         String Ten_KM = km.getTen_KM();
         String HinhThuc_KM = km.getHinhThuc_KM();
         String MoTa_KM = km.getMoTa_KM();
-        int DiemYeuCau_KM = km.getDiemYeuCau_KM();
+        float DiemYeuCau_KM = km.getGiaTri_YeuCau_KM();
         float GiaTri_KM = km.getGiaTri_KM();
         Date Ngay_BD_KM = km.getNgay_BD();
         Date Ngay_KT_KM = km.getNgay_KT();
-        String NgayTrongThang_KM = km.getNgayTrongThang_KM();
-        String DieuKien_KM = km.getDieuKien_KM(); // Sửa lỗi gán sai biến như ảnh
-        boolean TrangThai_KM = km.getTrangThai();
+        boolean TrangThai_KM = km.isTrangThai();
 
         // Chuyển đổi trạng thái từ boolean sang chuỗi mô tả
         String TrangThaiText = TrangThai_KM ? "Đang Hoạt Động" : "Không Hoạt Động";
 
         Object[] obj = new Object[]{
             Ma_KM, Ten_KM, MoTa_KM, HinhThuc_KM, DiemYeuCau_KM, GiaTri_KM,
-            Ngay_BD_KM, Ngay_KT_KM, NgayTrongThang_KM, DieuKien_KM, TrangThaiText
+            Ngay_BD_KM, Ngay_KT_KM, TrangThaiText
         };
 
         return obj;
@@ -102,8 +98,8 @@ public class QL_KhuyenMai {
     // Hàm Thêm Dữ Liệu Vào Tài Khoản
     public int Them_KM(KhuyenMai km) {
         String SQL = "INSERT INTO KHUYENMAI \n"
-                + "(MA_KM, TENKM, MOTA, HINHTHUC_KM, DIEM_YEUCAU, GIATRI, NGAYBATDAU, NGAYKETTHUC, NGAYTRONGTHANG, DIEUKIEN, TRANGTHAI)\n"
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"; // Có Hai Cách Giải Quyết Vấn Đề Về Thời Gian Tạo Này
+                + "            (MA_KM, TENKM, MOTA, HINHTHUC_KM, GIATRI_YEUCAU_KM, GIATRI, NGAYBATDAU, NGAYKETTHUC, TRANGTHAI)\n"
+                + "            VALUES (  ?  ,  ?  ,   ?  ,  ?  ,  ?  ,  ? ,  ?  ,  ? ,  ? )"; // Có Hai Cách Giải Quyết Vấn Đề Về Thời Gian Tạo Này
         // Thứ Nhất Là Dùng Luôn Câu Lệnh SQL Là GETDATE() Còn Cái Này Thì Khả Năng Là Không Nhìn Thấy
         // Hai Là Dùng Code Java Thì Dài Ròng Hơn Nhưng Lại Có Lợi Là Nhìn Thấy Được Ở Ô Thời Gian
         try {
@@ -113,13 +109,11 @@ public class QL_KhuyenMai {
             pstm.setString(2, km.getTen_KM());
             pstm.setString(3, km.getMoTa_KM());
             pstm.setString(4, km.getHinhThuc_KM());
-            pstm.setInt(5, km.getDiemYeuCau_KM());
+            pstm.setFloat(5, km.getGiaTri_YeuCau_KM());
             pstm.setFloat(6, km.getGiaTri_KM());
             pstm.setDate(7, km.getNgay_BD());
             pstm.setDate(8, km.getNgay_KT());
-            pstm.setString(9, km.getNgayTrongThang_KM());
-            pstm.setString(10, km.getDieuKien_KM());
-            pstm.setBoolean(11, km.getTrangThai());
+            pstm.setBoolean(11, km.isTrangThai());
             if (pstm.executeUpdate() > 0) {
                 System.out.println("Them Khuyen Mai. Connect");
                 return 1;
@@ -149,19 +143,17 @@ public class QL_KhuyenMai {
 
     // Hàm Sửa Dữ Liệu Tài Khoản
     public int Sua_KM(KhuyenMai km, String TheoMa) {
-        String SQL = "UPDATE KHUYENMAI\n"
-                + "    SET MA_KM = ?, \n"
-                + "    TENKM = ?, \n"
-                + "    MOTA = ?, \n"
-                + "    HINHTHUC_KM = ?, \n"
-                + "    DIEM_YEUCAU = ?, \n"
-                + "    GIATRI = ?,  \n"
-                + "    NGAYBATDAU = ?, \n"
-                + "    NGAYKETTHUC = ?, \n"
-                + "    NGAYTRONGTHANG = ?, \n"
-                + "    DIEUKIEN = ?,  \n"
-                + "    TRANGTHAI = ?\n"
-                + "    WHERE MA_KM = ?";
+        String SQL = "UPDATE KHUYENMAI SET\n"
+                + "                    MA_KM = ?,\n"
+                + "                    TENKM = ?, \n"
+                + "                    MOTA = ?,\n"
+                + "                    HINHTHUC_KM = ?,\n"
+                + "                    GIATRI_YEUCAU_KM = ?, \n"
+                + "                    GIATRI = ?,  \n"
+                + "                    NGAYBATDAU = ?, \n"
+                + "                    NGAYKETTHUC = ?, \n"
+                + "                    TRANGTHAI = ?\n"
+                + "                    WHERE MA_KM = ?";
         try {
             Connection Connect = conn.DBConnect();
             PreparedStatement pstm = Connect.prepareStatement(SQL);
@@ -169,14 +161,12 @@ public class QL_KhuyenMai {
             pstm.setString(2, km.getTen_KM());
             pstm.setString(3, km.getMoTa_KM());
             pstm.setString(4, km.getHinhThuc_KM());
-            pstm.setInt(5, km.getDiemYeuCau_KM());
+            pstm.setFloat(5, km.getGiaTri_YeuCau_KM());
             pstm.setFloat(6, km.getGiaTri_KM());
             pstm.setDate(7, km.getNgay_BD());
             pstm.setDate(8, km.getNgay_KT());
-            pstm.setString(9, km.getNgayTrongThang_KM());
-            pstm.setString(10, km.getDieuKien_KM());
-            pstm.setBoolean(11, km.getTrangThai());
-            pstm.setString(12, TheoMa);
+            pstm.setBoolean(9, km.isTrangThai());
+            pstm.setString(10, TheoMa);
             if (pstm.executeUpdate() > 0) {
                 System.out.println("Sua Du Lieu Khuyen Mai. Connect");
                 return 1;
@@ -203,15 +193,13 @@ public class QL_KhuyenMai {
                 String Ten_KM = rs.getString(2);
                 String HinhThuc_KM = rs.getString(3);
                 String MoTa_KM = rs.getString(4);
-                int DiemYeuCau_KM = rs.getInt(5);
+                float GiaTri_YeuCau_KM = rs.getInt(5);
                 float GiaTri_KM = rs.getFloat(6);
                 Date Ngay_BD_KM = rs.getDate(7);
                 Date Ngay_KT_KM = rs.getDate(8);
-                String NgayTrongThang_KM = rs.getString(9);
-                String DieuKien_KM = rs.getString(10);
-                boolean TrangThai_KM = rs.getBoolean(11);
+                boolean TrangThai_KM = rs.getBoolean(9);
 
-                KhuyenMai km = new KhuyenMai(Ma_KM, Ten_KM, HinhThuc_KM, MoTa_KM, DiemYeuCau_KM, GiaTri_KM, Ngay_BD_KM, Ngay_KT_KM, NgayTrongThang_KM, DieuKien_KM, TrangThai_KM);
+                KhuyenMai km = new KhuyenMai(Ma_KM, Ten_KM, HinhThuc_KM, MoTa_KM, GiaTri_YeuCau_KM, GiaTri_KM, Ngay_BD_KM, Ngay_KT_KM, TrangThai_KM);
 
                 List_KM.add(km);
             }
@@ -316,12 +304,10 @@ public class QL_KhuyenMai {
                         rs.getString("TENKM"),
                         rs.getString("MOTA"),
                         rs.getString("HINHTHUC_KM"),
-                        rs.getInt("DIEM_YEUCAU"),
+                        rs.getFloat("GIATRI_YEUCAU_KM"),
                         rs.getFloat("GIATRI"),
                         rs.getDate("NGAYBATDAU"),
                         rs.getDate("NGAYKETTHUC"),
-                        rs.getString("NGAYTRONGTHANG"),
-                        rs.getString("DIEUKIEN"),
                         rs.getBoolean("TRANGTHAI")
                 );
             }
@@ -411,9 +397,9 @@ public class QL_KhuyenMai {
     }
 
     // Khuyến Mãi 10 Ô Thai Trạng Thái
-    public List<KhuyenMai_10_O> Get_All_KM01() {
-        List<KhuyenMai_10_O> List_KM = new ArrayList<>(); //  Tạo một danh sách rỗng kiểu Nguyên Liệu để chứa tất cả tài khoản đọc từ database.
-        String SQL = "SELECT MA_KM, TENKM, MOTA, HINHTHUC_KM, DIEM_YEUCAU, GIATRI, NGAYBATDAU, NGAYKETTHUC, NGAYTRONGTHANG, DIEUKIEN\n"
+    public List<KhuyenMai_8_O> Get_All_KM01() {
+        List<KhuyenMai_8_O> List_KM = new ArrayList<>(); //  Tạo một danh sách rỗng kiểu Nguyên Liệu để chứa tất cả tài khoản đọc từ database.
+        String SQL = "SELECT MA_KM, TENKM, MOTA, HINHTHUC_KM, GIATRI_YEUCAU_KM, GIATRI, NGAYBATDAU, NGAYKETTHUC\n"
                 + "FROM KHUYENMAI\n"
                 + "WHERE TRANGTHAI = '1'"; //  Lấy toàn bộ dòng dữ liệu từ bảng NGUYENLIEU
         try {
@@ -425,13 +411,11 @@ public class QL_KhuyenMai {
                 String Ten_KM = rs.getString(2);
                 String HinhThuc_KM = rs.getString(3);
                 String MoTa_KM = rs.getString(4);
-                int DiemYeuCau_KM = rs.getInt(5);
+                float GiaTri_YeuCau_KM = rs.getFloat(5);
                 float GiaTri_KM = rs.getFloat(6);
                 Date Ngay_BD_KM = rs.getDate(7);
                 Date Ngay_KT_KM = rs.getDate(8);
-                String NgayTrongThang_KM = rs.getString(9);
-                String DieuKien_KM = rs.getString(10);
-                KhuyenMai_10_O km = new KhuyenMai_10_O(Ma_KM, Ten_KM, HinhThuc_KM, MoTa_KM, DiemYeuCau_KM, GiaTri_KM, Ngay_BD_KM, Ngay_KT_KM, NgayTrongThang_KM, DieuKien_KM);
+                KhuyenMai_8_O km = new KhuyenMai_8_O(Ma_KM, Ten_KM, HinhThuc_KM, MoTa_KM, GiaTri_YeuCau_KM, GiaTri_KM, Ngay_BD_KM, Ngay_KT_KM);
                 List_KM.add(km);
             }
         } catch (Exception e) {
@@ -440,30 +424,28 @@ public class QL_KhuyenMai {
         return List_KM;
     }
 
-    public Object[] GetRow_KM01(KhuyenMai_10_O km) {
+    public Object[] GetRow_KM01(KhuyenMai_8_O km) {
         String Ma_KM = km.getMa_KM();
         String Ten_KM = km.getTen_KM();
         String MoTa_KM = km.getMoTa_KM();
         String HinhThuc_KM = km.getHinhThuc_KM();
-        int DiemYeuCau_KM = km.getDiemYeuCau_KM();
+        float DiemYeuCau_KM = km.getGiaTri_YeuCau_KM();
         float GiaTri_KM = km.getGiaTri_KM();
         Date Ngay_BD_KM = km.getNgay_BD();
         Date Ngay_KT_KM = km.getNgay_KT();
-        String NgayTrongThang_KM = km.getNgayTrongThang_KM();
-        String DieuKien_KM = km.getDieuKien_KM(); // Sửa lỗi gán sai biến như ảnh
         // Chuyển đổi trạng thái từ boolean sang chuỗi mô tả
         Object[] obj = new Object[]{
             Ma_KM, Ten_KM, HinhThuc_KM, MoTa_KM, DiemYeuCau_KM, GiaTri_KM,
-            Ngay_BD_KM, Ngay_KT_KM, NgayTrongThang_KM, DieuKien_KM
+            Ngay_BD_KM, Ngay_KT_KM
         };
 
         return obj;
     }
 
     // Trạng Thái Đang Hoạt Động
-    public List<KhuyenMai_10_O> Get_All_KM02() {
-        List<KhuyenMai_10_O> List_KM = new ArrayList<>(); //  Tạo một danh sách rỗng kiểu Nguyên Liệu để chứa tất cả tài khoản đọc từ database.
-        String SQL = "SELECT MA_KM, TENKM, MOTA, HINHTHUC_KM, DIEM_YEUCAU, GIATRI, NGAYBATDAU, NGAYKETTHUC, NGAYTRONGTHANG, DIEUKIEN\n"
+    public List<KhuyenMai_8_O> Get_All_KM02() {
+        List<KhuyenMai_8_O> List_KM = new ArrayList<>(); //  Tạo một danh sách rỗng kiểu Nguyên Liệu để chứa tất cả tài khoản đọc từ database.
+        String SQL = "SELECT MA_KM, TENKM, MOTA, HINHTHUC_KM, GIATRI_YEUCAU_KM, GIATRI, NGAYBATDAU, NGAYKETTHUC\n"
                 + "FROM KHUYENMAI\n"
                 + "WHERE TRANGTHAI = '0'"; //  Lấy toàn bộ dòng dữ liệu từ bảng NGUYENLIEU
         try {
@@ -475,13 +457,11 @@ public class QL_KhuyenMai {
                 String Ten_KM = rs.getString(2);
                 String HinhThuc_KM = rs.getString(3);
                 String MoTa_KM = rs.getString(4);
-                int DiemYeuCau_KM = rs.getInt(5);
+                float GiaTri_YeuCau_KM = rs.getFloat(5);
                 float GiaTri_KM = rs.getFloat(6);
                 Date Ngay_BD_KM = rs.getDate(7);
                 Date Ngay_KT_KM = rs.getDate(8);
-                String NgayTrongThang_KM = rs.getString(9);
-                String DieuKien_KM = rs.getString(10);
-                KhuyenMai_10_O km = new KhuyenMai_10_O(Ma_KM, Ten_KM, HinhThuc_KM, MoTa_KM, DiemYeuCau_KM, GiaTri_KM, Ngay_BD_KM, Ngay_KT_KM, NgayTrongThang_KM, DieuKien_KM);
+                KhuyenMai_8_O km = new KhuyenMai_8_O(Ma_KM, Ten_KM, HinhThuc_KM, MoTa_KM, GiaTri_YeuCau_KM, GiaTri_KM, Ngay_BD_KM, Ngay_KT_KM);
                 List_KM.add(km);
             }
         } catch (Exception e) {
@@ -490,39 +470,37 @@ public class QL_KhuyenMai {
         return List_KM;
     }
 
-    public Object[] GetRow_KM02(KhuyenMai_10_O km) {
+    public Object[] GetRow_KM02(KhuyenMai_8_O km) {
         String Ma_KM = km.getMa_KM();
         String Ten_KM = km.getTen_KM();
         String MoTa_KM = km.getMoTa_KM();
         String HinhThuc_KM = km.getHinhThuc_KM();
-        int DiemYeuCau_KM = km.getDiemYeuCau_KM();
+        float DiemYeuCau_KM = km.getGiaTri_YeuCau_KM();
         float GiaTri_KM = km.getGiaTri_KM();
         Date Ngay_BD_KM = km.getNgay_BD();
         Date Ngay_KT_KM = km.getNgay_KT();
-        String NgayTrongThang_KM = km.getNgayTrongThang_KM();
-        String DieuKien_KM = km.getDieuKien_KM(); // Sửa lỗi gán sai biến như ảnh
-
+        // Chuyển đổi trạng thái từ boolean sang chuỗi mô tả
         Object[] obj = new Object[]{
             Ma_KM, Ten_KM, HinhThuc_KM, MoTa_KM, DiemYeuCau_KM, GiaTri_KM,
-            Ngay_BD_KM, Ngay_KT_KM, NgayTrongThang_KM, DieuKien_KM
+            Ngay_BD_KM, Ngay_KT_KM
         };
 
         return obj;
     }
 
     // Lấy Điều Kiện KM 
-    public KhuyenMai layThongTinKhuyenMai(String maKM) {
-        String SQL = "SELECT HINHTHUC_KM, DIEM_YEUCAU, GIATRI FROM KHUYENMAI WHERE MA_KM = ?";
+    public KhuyenMai LayThongTin_KM(String Ma_KM) {
+        String SQL = "SELECT HINHTHUC_KM, GIATRI_YEUCAU_KM, GIATRI FROM KHUYENMAI WHERE MA_KM = ?";
         try {
             Connection connect = conn.DBConnect();
             PreparedStatement pstm = connect.prepareStatement(SQL);
-            pstm.setString(1, maKM);
+            pstm.setString(1, Ma_KM);
             ResultSet rs = pstm.executeQuery();
 
             if (rs.next()) {
                 KhuyenMai km = new KhuyenMai();
                 km.setHinhThuc_KM(rs.getString("HINHTHUC_KM")); // "Điểm tích luỹ" hoặc "Tiền mặt"
-                km.setDiemYeuCau_KM(rs.getInt("DIEM_YEUCAU"));
+                km.setGiaTri_YeuCau_KM(rs.getFloat("GIATRI_YEUCAU_KM"));
                 km.setGiaTri_KM(rs.getFloat("GIATRI"));
                 return km;
             }
@@ -533,9 +511,9 @@ public class QL_KhuyenMai {
     }
 
     // Lọc KM
-    public List<KhuyenMai> timKiemKhuyenMaiPhuHop(int diemKhach, float tongTien) {
+    public List<KhuyenMai> TimKiem_KhuyenMai_PhuHop(int DiemKhach, float TongTien) {
         List<KhuyenMai> danhSachPhuHop = new ArrayList<>();
-        String SQL = "SELECT MA_KM , HINHTHUC_KM , DIEM_YEUCAU , DIEM_YEUCAU, GIATRI FROM KHUYENMAI";
+        String SQL = "SELECT MA_KM , HINHTHUC_KM , GIATRI_YEUCAU_KM , GIATRI_YEUCAU_KM, GIATRI FROM KHUYENMAI";
 
         try {
             Connection conect = conn.DBConnect();
@@ -544,22 +522,25 @@ public class QL_KhuyenMai {
 
             while (rs.next()) {
                 String hinhThuc = rs.getString("HINHTHUC_KM");
-                int DiemYeuCau = rs.getInt("DIEM_YEUCAU");
-                int TienMatYeuCau = rs.getInt("DIEM_YEUCAU");
-                float mucGiam = rs.getFloat("GIATRI"); // giả sử đây là số tiền giảm
+                float DiemYeuCau = rs.getFloat("GIATRI_YEUCAU_KM");
+                float TienMatYeuCau = rs.getFloat("GIATRI_YEUCAU_KM");
+                float MucGiam = rs.getFloat("GIATRI"); // giả sử đây là số tiền giảm
 
                 boolean hopLe = false;
-                if (hinhThuc.equalsIgnoreCase("Điểm Tích Luỹ") && diemKhach >= DiemYeuCau) {
+                if (hinhThuc.equalsIgnoreCase("Điểm Tích Luỹ") && DiemKhach >= DiemYeuCau) {
                     hopLe = true;
-                } else if (hinhThuc.equalsIgnoreCase("Tiền Mặt") && tongTien >= TienMatYeuCau) {
+                } else if (hinhThuc.equalsIgnoreCase("Tiền Mặt") && TongTien >= TienMatYeuCau) {
                     hopLe = true;
                 }
+//                 else if (hinhThuc.equalsIgnoreCase("Phần Trăm") && ) {
+//                    
+//                }
 
                 if (hopLe) {
                     KhuyenMai km = new KhuyenMai();
                     km.setMa_KM(rs.getString("MA_KM"));
                     km.setHinhThuc_KM(hinhThuc);
-                    km.setGiaTri_KM(mucGiam);
+                    km.setGiaTri_KM(MucGiam);
                     danhSachPhuHop.add(km);
                 }
             }
@@ -572,14 +553,14 @@ public class QL_KhuyenMai {
     }
 
     // Cái Phần Khuyến Mãi Theo Trạng Thái 
-    public List<KhuyenMai> timKiemKhuyenMaiTheoTrangThai(boolean trangThai) {
+    public List<KhuyenMai> timKiemKhuyenMaiTheoTrangThai(boolean TrangThai) {
         List<KhuyenMai> danhSachKM = new ArrayList<>();
         String sql = "SELECT * FROM KHUYENMAI WHERE TRANGTHAI = ?";
 // MA_KM , TENKM , MOTA , HINHTHUC_KM , DIEM_YEUCAU , GIATRI , NGAYBATDAU , NGAYKETTHUC , NGAYTRONGTHANG , DIEM_YEUCAU , TRANGTHAI
         try {
             Connection conect = conn.DBConnect();
             PreparedStatement stmt = conect.prepareStatement(sql);
-            stmt.setBoolean(1, trangThai);
+            stmt.setBoolean(1, TrangThai);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -588,12 +569,10 @@ public class QL_KhuyenMai {
                             rs.getString("TENKM"),
                             rs.getString("MOTA"),
                             rs.getString("HINHTHUC_KM"),
-                            rs.getInt("DIEM_YEUCAU"),
+                            rs.getInt("GIATRI_YEUCAU_KM"),
                             rs.getFloat("GIATRI"),
                             rs.getDate("NGAYBATDAU"),
                             rs.getDate("NGAYKETTHUC"),
-                            rs.getString("NGAYTRONGTHANG"),
-                            rs.getString("DIEUKIEN"),
                             rs.getBoolean("TRANGTHAI")
                     );
                     danhSachKM.add(km);
@@ -621,12 +600,10 @@ public class QL_KhuyenMai {
                             rs.getString("TENKM"),
                             rs.getString("MOTA"),
                             rs.getString("HINHTHUC_KM"),
-                            rs.getInt("DIEM_YEUCAU"),
+                            rs.getInt("GIATRI_YEUCAU_KM"),
                             rs.getFloat("GIATRI"),
                             rs.getDate("NGAYBATDAU"),
                             rs.getDate("NGAYKETTHUC"),
-                            rs.getString("NGAYTRONGTHANG"),
-                            rs.getString("DIEUKIEN"),
                             rs.getBoolean("TRANGTHAI")
                     );
                 }
@@ -636,20 +613,21 @@ public class QL_KhuyenMai {
         }
         return null;
     }
+
     // Lấy Giá Trị Khuyến Mãi Qua Hàm
-    public float layGiaTriKhuyenMai(String maKM) {
-        float giaTri = 0f; // Mặc định nếu không tìm thấy mã
+    public float LayGiaTri_KhuyenMai(String Ma_KM) {
+        float GiaTri_KM = 0f; // Mặc định nếu không tìm thấy mã
 
         String sql = "SELECT GIATRI FROM KHUYENMAI WHERE MA_KM = ?";
 
-        try  {
+        try {
             Connection conect = conn.DBConnect();
             PreparedStatement ps = conect.prepareStatement(sql);
-            ps.setString(1, maKM);
+            ps.setString(1, Ma_KM);
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                giaTri = rs.getFloat("GIATRI");
+                GiaTri_KM = rs.getFloat("GIATRI");
             }
 
         } catch (SQLException e) {
@@ -659,6 +637,6 @@ public class QL_KhuyenMai {
             Logger.getLogger(QL_KhuyenMai.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        return giaTri;
+        return GiaTri_KM;
     }
 }

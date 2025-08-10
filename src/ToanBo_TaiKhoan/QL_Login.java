@@ -27,6 +27,7 @@ public class QL_Login {
         conn = new MyConnection();
     }
 
+    // Đăng Nhập Với Email Với Mã Tài KHoản Cá Nhân
     public String login(String TheoEmail, String TheoMa_TK) {
         String sql = "SELECT * FROM TAIKHOAN WHERE EMAIL = ? AND MA_TK = ?";
 
@@ -48,7 +49,7 @@ public class QL_Login {
             return null; // Lỗi kết nối
         }
     }
-    
+
     public TaiKhoan_4_O getTaiKhoanTheoEmail(String Email) {
         String sql = "SELECT EMAIL , MA_TK , VAITRO , ANH_TK FROM TAIKHOAN WHERE EMAIL =   ?  ";
         TaiKhoan_4_O tk = null;
@@ -68,6 +69,25 @@ public class QL_Login {
             e.printStackTrace();
         }
         return tk;
+    }
+
+    // Cập Nhật Trạng Thái Khi Đăng Nhập
+    public int capNhatTrangThai(String Ma_TK, boolean TrangThai) {
+        String sql = "UPDATE TAIKHOAN SET TRANGTHAI = ? WHERE MA_TK = ?";
+        try (Connection connection = conn.DBConnect(); PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setBoolean(1, TrangThai); // true = 1, false = 0
+            ps.setString(2, Ma_TK);
+
+            if (ps.executeUpdate() > 0) {
+                return 1;
+            }
+            // Trả về số dòng bị ảnh hưởng
+        } catch (Exception e) {
+            System.out.println("❌ Lỗi khi cập nhật trạng thái tài khoản: " + e.getMessage());
+            return 0;
+        }
+        return 0;
     }
 
 }

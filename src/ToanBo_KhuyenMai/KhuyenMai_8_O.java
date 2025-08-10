@@ -10,32 +10,29 @@ import java.sql.Date;
  *
  * @author ADMIN
  */
-public class KhuyenMai_10_O {
+public class KhuyenMai_8_O {
+
     private String Ma_KM;
     private String Ten_KM;
     private String MoTa_KM;
     private String HinhThuc_KM;
-    private int DiemYeuCau_KM;
+    private float GiaTri_YeuCau_KM;
     private float GiaTri_KM;
     private Date Ngay_BD;
     private Date Ngay_KT;
-    private String NgayTrongThang_KM;
-    private String DieuKien_KM;
 
-    public KhuyenMai_10_O() {
+    public KhuyenMai_8_O() {
     }
 
-    public KhuyenMai_10_O(String Ma_KM, String Ten_KM, String MoTa_KM, String HinhThuc_KM, int DiemYeuCau_KM, float GiaTri_KM, Date Ngay_BD, Date Ngay_KT, String NgayTrongThang_KM, String DieuKien_KM) {
+    public KhuyenMai_8_O(String Ma_KM, String Ten_KM, String MoTa_KM, String HinhThuc_KM, float GiaTri_YeuCau_KM, float GiaTri_KM, Date Ngay_BD, Date Ngay_KT) {
         this.Ma_KM = Ma_KM;
         this.Ten_KM = Ten_KM;
         this.MoTa_KM = MoTa_KM;
         this.HinhThuc_KM = HinhThuc_KM;
-        this.DiemYeuCau_KM = DiemYeuCau_KM;
+        this.GiaTri_YeuCau_KM = GiaTri_YeuCau_KM;
         this.GiaTri_KM = GiaTri_KM;
         this.Ngay_BD = Ngay_BD;
         this.Ngay_KT = Ngay_KT;
-        this.NgayTrongThang_KM = NgayTrongThang_KM;
-        this.DieuKien_KM = DieuKien_KM;
     }
 
     public String getMa_KM() {
@@ -70,12 +67,12 @@ public class KhuyenMai_10_O {
         this.HinhThuc_KM = HinhThuc_KM;
     }
 
-    public int getDiemYeuCau_KM() {
-        return DiemYeuCau_KM;
+    public float getGiaTri_YeuCau_KM() {
+        return GiaTri_YeuCau_KM;
     }
 
-    public void setDiemYeuCau_KM(int DiemYeuCau_KM) {
-        this.DiemYeuCau_KM = DiemYeuCau_KM;
+    public void setGiaTri_YeuCau_KM(float GiaTri_YeuCau_KM) {
+        this.GiaTri_YeuCau_KM = GiaTri_YeuCau_KM;
     }
 
     public float getGiaTri_KM() {
@@ -102,20 +99,4 @@ public class KhuyenMai_10_O {
         this.Ngay_KT = Ngay_KT;
     }
 
-    public String getNgayTrongThang_KM() {
-        return NgayTrongThang_KM;
-    }
-
-    public void setNgayTrongThang_KM(String NgayTrongThang_KM) {
-        this.NgayTrongThang_KM = NgayTrongThang_KM;
-    }
-
-    public String getDieuKien_KM() {
-        return DieuKien_KM;
-    }
-
-    public void setDieuKien_KM(String DieuKien_KM) {
-        this.DieuKien_KM = DieuKien_KM;
-    }
-    
 }
