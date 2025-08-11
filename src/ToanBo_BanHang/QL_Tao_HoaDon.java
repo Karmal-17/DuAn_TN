@@ -59,7 +59,7 @@ public class QL_Tao_HoaDon {
 
     public List<HoaDon_6_O> Get_ALL_HoaDon_6_O() {
         List<HoaDon_6_O> List_HD = new ArrayList<>();
-        String SQL = "SELECT MA_HD ,MA_TK ,NGAYLAP, TONGTIEN, HINHTHUC_HD, TRANGTHAI FROM HOADON";
+        String SQL = "SELECT MA_HD ,MA_TK ,NGAYLAP, TONGTIEN, HINHTHUC_HD, TRANGTHAI FROM HOADON WHERE TRANGTHAI = N'Chưa Thanh Toán'";
         try {
             Connection connect = conn.DBConnect();
             Statement stm = connect.createStatement();
@@ -301,6 +301,7 @@ public class QL_Tao_HoaDon {
         }
     }
 
+    // Lấy Hoá Đơn Theo Trạng Thái
     public String layTrangThaiTheoMaHD(String maHD) {
         String trangThai = "UNKNOWN"; // Giá trị mặc định
 
@@ -321,5 +322,48 @@ public class QL_Tao_HoaDon {
         }
 
         return trangThai;
+    }
+    
+    // Lấy Hoá Đơn Theo
+    public List<HoaDon> Get_All_HoaDon_Da_ThanhToan() {
+        List<HoaDon> List_HD = new ArrayList<>();
+        String SQL = "SELECT * FROM HOADON WHERE TRANGTHAI = N'Đã Thanh Toán'";
+        try {
+            Connection connect = conn.DBConnect();
+            Statement stm = connect.createStatement();
+            ResultSet rs = stm.executeQuery(SQL);
+            while (rs.next()) {
+                String Ma_HD = rs.getString(1);
+                String Ma_TK = rs.getString(2);
+                Date NgayLap_HD = rs.getDate(3);
+                float TongTien = rs.getFloat(4);
+                String HinhThuc_HD = rs.getString(5);
+                String TrangThai = rs.getString(6);
+                String Ma_KM = rs.getString(7);
+                float SoTienKhachTra_HD = rs.getFloat(8);
+                String Ma_KH = rs.getString(9);
+                int TichDiem = rs.getInt(10);
+                HoaDon hd = new HoaDon(Ma_HD, Ma_TK, NgayLap_HD, TongTien, HinhThuc_HD, TrangThai, Ma_KM, SoTienKhachTra_HD, Ma_KH, TichDiem);
+                List_HD.add(hd);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return List_HD;
+    }
+    
+    public Object[] Get_Row_HD_Da_ThanhToan(HoaDon hd) {
+        String Ma_HD = hd.getMa_HD();
+        String Ma_TK = hd.getMa_TK();
+        Date NgayLap_HD = hd.getNgayLap_HD();
+        float TongTien = hd.getTongTien();
+        String HinhThuc_HD = hd.getHinhThuc_HD();
+        String TrangThai = hd.getTrangThai();
+        String Ma_KM = hd.getMa_KM();
+        float SoTienKhachTra_HD = hd.getSoTienKhachTra_HD();
+        String Ma_KH = hd.getMa_KH();
+        int TichDiem = hd.getTichDiem();
+        Object[] obj = new Object[]{Ma_HD, Ma_TK, NgayLap_HD, TongTien, HinhThuc_HD, TrangThai, Ma_KM, SoTienKhachTra_HD, Ma_KH, TichDiem};
+        return obj;
     }
 }

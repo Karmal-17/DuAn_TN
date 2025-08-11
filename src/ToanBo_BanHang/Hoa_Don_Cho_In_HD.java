@@ -15,101 +15,119 @@ import java.util.List;
  */
 public class Hoa_Don_Cho_In_HD {
 
-    private String Ma_HoaDon;
+    private String Ma_HD;
     private LocalDateTime ThoiGian_In_HD;
-    private KhachHang_3_O_In_HD KhachHang_In_HD;
-    private List<ChiTietHoaDon> ChiTietHoaDon_In_HD;
-    private float Giam_Gia;
-    private Tai_Khoan_3_O_In_HD TaiKhoan_In_HD;
-    private String DiaChi;
-    private String SoDienThoai_LienHe;
+    private KhachHang_3_O_In_HD khachHang;
+    private List<ChiTiet_HoaDon_2_O_In_HD> chiTietHoaDon;
+    private float GiamGia;
+    private Tai_Khoan_3_O_In_HD taiKhoan;
+    private String diaChi;
+    private String SoDienThoaiLienHe;
     private String LinkAnh_Logo;
 
     public Hoa_Don_Cho_In_HD() {
     }
 
-    public Hoa_Don_Cho_In_HD(String Ma_HoaDon, LocalDateTime ThoiGian_In_HD, KhachHang_3_O_In_HD KhachHang_In_HD, List<ChiTietHoaDon> ChiTietHoaDon_In_HD, float Giam_Gia, Tai_Khoan_3_O_In_HD TaiKhoan_In_HD, String DiaChi, String SoDienThoai_LienHe, String LinkAnh_Logo) {
-        this.Ma_HoaDon = Ma_HoaDon;
+    public Hoa_Don_Cho_In_HD(String Ma_HD, LocalDateTime ThoiGian_In_HD, KhachHang_3_O_In_HD Khach_Hang,
+            List<ChiTiet_HoaDon_2_O_In_HD> ChiTiet_HD_In_HD, float GiamGia, Tai_Khoan_3_O_In_HD TaiKhoan,
+            String DiaChi, String SoDienThoai_LienHe, String LinkAnh_Logo) {
+        this.Ma_HD = Ma_HD;
         this.ThoiGian_In_HD = ThoiGian_In_HD;
-        this.KhachHang_In_HD = KhachHang_In_HD;
-        this.ChiTietHoaDon_In_HD = ChiTietHoaDon_In_HD;
-        this.Giam_Gia = Giam_Gia;
-        this.TaiKhoan_In_HD = TaiKhoan_In_HD;
-        this.DiaChi = DiaChi;
-        this.SoDienThoai_LienHe = SoDienThoai_LienHe;
+        this.khachHang = Khach_Hang;
+        this.chiTietHoaDon = ChiTiet_HD_In_HD;
+        this.GiamGia = GiamGia;
+        this.taiKhoan = TaiKhoan;
+        this.diaChi = DiaChi;
+        this.SoDienThoaiLienHe = SoDienThoai_LienHe;
         this.LinkAnh_Logo = LinkAnh_Logo;
     }
 
-    // Getters
-    public String getMa_HoaDon() {
-        return Ma_HoaDon;
+    // Getters & Setters
+    public String getMa_HD() {
+        return Ma_HD;
     }
 
-    public void setMa_HoaDon(String Ma_HoaDon) {
-        this.Ma_HoaDon = Ma_HoaDon;
+    public void setMa_HD(String Ma_HD) {
+        this.Ma_HD = Ma_HD;
     }
 
-    public LocalDateTime getThoiGian_In_HD() {
+    public LocalDateTime getThoiGianIn() {
         return ThoiGian_In_HD;
     }
 
-    public void setThoiGian_In_HD(LocalDateTime ThoiGian_In_HD) {
-        this.ThoiGian_In_HD = ThoiGian_In_HD;
+    public void setThoiGian_In_HD(LocalDateTime ThoiGianIn_HD) {
+        this.ThoiGian_In_HD = ThoiGianIn_HD;
     }
 
-    public KhachHang_3_O_In_HD getKhachHang_In_HD() {
-        return KhachHang_In_HD;
+    public KhachHang_3_O_In_HD getKhachHang() {
+        return khachHang;
     }
 
-    public void setKhachHang_In_HD(KhachHang_3_O_In_HD KhachHang_In_HD) {
-        this.KhachHang_In_HD = KhachHang_In_HD;
+    public void setKhachHang(KhachHang_3_O_In_HD khachHang) {
+        this.khachHang = khachHang;
     }
 
-    public List<ChiTietHoaDon> getChiTietHoaDon_In_HD() {
-        return ChiTietHoaDon_In_HD;
+    public List<ChiTiet_HoaDon_2_O_In_HD> getChiTietHoaDon() {
+        return chiTietHoaDon;
     }
 
-    public void setChiTietHoaDon_In_HD(List<ChiTietHoaDon> ChiTietHoaDon_In_HD) {
-        this.ChiTietHoaDon_In_HD = ChiTietHoaDon_In_HD;
+    public void setChiTietHoaDon(List<ChiTiet_HoaDon_2_O_In_HD> chiTietHoaDon) {
+        this.chiTietHoaDon = chiTietHoaDon;
     }
 
-    public float getGiam_Gia() {
-        return Giam_Gia;
+    public float getGiamGia() {
+        return GiamGia;
     }
 
-    public void setGiam_Gia(float Giam_Gia) {
-        this.Giam_Gia = Giam_Gia;
+    public void setGiamGia(float GiamGia) {
+        this.GiamGia = GiamGia;
     }
 
-    public Tai_Khoan_3_O_In_HD getTaiKhoan_In_HD() {
-        return TaiKhoan_In_HD;
+    public Tai_Khoan_3_O_In_HD getTaiKhoan() {
+        return taiKhoan;
     }
 
-    public void setTaiKhoan_In_HD(Tai_Khoan_3_O_In_HD TaiKhoan_In_HD) {
-        this.TaiKhoan_In_HD = TaiKhoan_In_HD;
+    public void setTaiKhoan(Tai_Khoan_3_O_In_HD taiKhoan) {
+        this.taiKhoan = taiKhoan;
     }
 
     public String getDiaChi() {
-        return DiaChi;
+        return diaChi;
     }
 
-    public void setDiaChi(String DiaChi) {
-        this.DiaChi = DiaChi;
+    public void setDiaChi(String diaChi) {
+        this.diaChi = diaChi;
     }
 
-    public String getSoDienThoai_LienHe() {
-        return SoDienThoai_LienHe;
+    public String getSoDienThoaiLienHe() {
+        return SoDienThoaiLienHe;
     }
 
-    public void setSoDienThoai_LienHe(String SoDienThoai_LienHe) {
-        this.SoDienThoai_LienHe = SoDienThoai_LienHe;
+    public void setSoDienThoaiLienHe(String soDienThoaiLienHe) {
+        this.SoDienThoaiLienHe = soDienThoaiLienHe;
     }
 
-    public String getLinkAnh_Logo() {
+    public String getLinkAnhLogo() {
         return LinkAnh_Logo;
     }
 
-    public void setLinkAnh_Logo(String LinkAnh_Logo) {
-        this.LinkAnh_Logo = LinkAnh_Logo;
+    public void setLinkAnhLogo(String linkAnhLogo) {
+        this.LinkAnh_Logo = linkAnhLogo;
     }
+
+    // Tính tổng số lượng sản phẩm
+    public int getTongSoLuongSanPham() {
+        return chiTietHoaDon.stream().mapToInt(ChiTiet_HoaDon_2_O_In_HD::getSoLuong).sum();
+    }
+
+    // Tính tổng tiền trước giảm giá
+    public double getTongTien() {
+        return chiTietHoaDon.stream().mapToDouble(ChiTiet_HoaDon_2_O_In_HD::getThanhTien).sum();
+    }
+
+    // Tính thành tiền sau giảm giá
+    public double getThanhTienSauGiam() {
+        return getTongTien() - GiamGia;
+    }
+
 }

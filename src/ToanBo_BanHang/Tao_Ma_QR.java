@@ -225,6 +225,20 @@ public class Tao_Ma_QR extends javax.swing.JFrame {
             return;
         }
 
+        // Kiểm tra số tài khoản chỉ chứa số
+        if (!So_TaiKhoan.matches("\\d+")) {
+            JOptionPane.showMessageDialog(this, "Số tài khoản chỉ được chứa số.");
+            return;
+        }
+
+        // Kiểm tra trùng trong DB
+        QL_NganHang qlnh = new QL_NganHang();
+        if (qlnh.checkTrungSTK_DB(So_TaiKhoan)) {
+            JOptionPane.showMessageDialog(this, "Số tài khoản đã tồn tại.");
+            return;
+        } else {
+        }
+
         String Ten_NganHang = cbox_Ten_Ngan_Hang.getSelectedItem().toString().trim();
 
         String TenChu_TaiKhoan = txt_Ten_TaiKhoan.getText().trim();
@@ -233,26 +247,49 @@ public class Tao_Ma_QR extends javax.swing.JFrame {
             return;
         }
 
+        // Chỉ chữ cái không dấu + khoảng trắng (không 2 khoảng trắng liên tiếp)
+        if (!TenChu_TaiKhoan.matches("^[A-Za-z]+( [A-Za-z]+)*$")) {
+            JOptionPane.showMessageDialog(this,
+                    "Tên chủ tài khoản chỉ được chứa chữ cái (không dấu) và khoảng trắng (không thừa).");
+            return;
+        }
+
+        // In hoa + giữ khoảng cách giữa các từ
+        TenChu_TaiKhoan = TenChu_TaiKhoan.toUpperCase();
+
         String ngayTaoStr = txt_NgayTao.getText().trim();
         if (!ngayTaoStr.matches("\\d{4}-\\d{2}-\\d{2}")) {
             JOptionPane.showMessageDialog(this, "Ngày tạo phải đúng định dạng yyyy-MM-dd.");
             return;
         }
 
-        String trangThai = "Không Hoạt Động"; // Mặc định
-
         try {
             DateTimeFormatter dinhDang = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDate localDate = LocalDate.parse(ngayTaoStr, dinhDang);
             Date ngayTao = Date.valueOf(localDate);
 
+            String trangThai = "Không Hoạt Động"; // Hoặc lấy từ UI nếu muốn cho phép nhập
+
+            // Xác nhận trước khi thêm
+            int choice = JOptionPane.showConfirmDialog(this,
+                    "Vui lòng kiểm tra lại toàn bộ thông tin tài khoản:\n"
+                    + "- Số TK: " + So_TaiKhoan + "\n"
+                    + "- Ngân hàng: " + Ten_NganHang + "\n"
+                    + "- Chủ TK: " + TenChu_TaiKhoan + "\n"
+                    + "- Ngày tạo: " + ngayTaoStr + "\n"
+                    + "Nhấn YES nếu đã đúng thông tin.",
+                    "Xác nhận tạo tài khoản", JOptionPane.YES_NO_OPTION);
+
+            if (choice != JOptionPane.YES_OPTION) {
+                return;
+            }
+
+            // Lưu vào DB
             NganHang nh = new NganHang(So_TaiKhoan, Ten_NganHang, TenChu_TaiKhoan, trangThai, ngayTao);
             int result = ql_NganHang.Them_NH(nh);
-            int Choice = JOptionPane.showConfirmDialog(this, "Vui Lòng Kiểm Tra Lại Toàn Bộ Thông Tin Tài Khoản Bạn Vừa Nhập ?"
-                    + "\n Nhấn - YES - Nếu Đã Đúng Thông Tin."
-                    + "\n Nhấn - NO - Để Xem Lại Tài Khoản Nhé."
-                    + "\n Fake AL Fresco’s Xin Cảm Ơn." , "Xác Nhận Tạo Tài Khoản Ngân Hàng." , JOptionPane.YES_NO_OPTION);
+
             JOptionPane.showMessageDialog(this, result == 1 ? "✅ Thêm thành công!" : "❌ Thêm thất bại!");
+
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "❌ Lỗi xử lý ngày tạo: " + e.getMessage());
         }
@@ -283,9 +320,25 @@ public class Tao_Ma_QR extends javax.swing.JFrame {
                 return;
             }
 
-            String trangThai = rdo_HoatDong.isSelected() ? "Hoạt Động" : "Không Hoạt Động"; // Mặc định
+            String trangThai = rdo_HoatDong.isSelected() ? "Hoạt Động" : "Không Hoạt Động";
 
             try {
+                // ✅ Check trạng thái Hoạt Động duy nhất
+                if ("Hoạt Động".equalsIgnoreCase(trangThai)) {
+                    // Nếu tài khoản hiện tại chưa phải Hoạt Động
+                    if (!"Hoạt Động".equalsIgnoreCase(
+                            ql_NganHang.Get_All().get(Index).getTrang_Thai()
+                    )) {
+                        // Và đã có tài khoản khác đang Hoạt Động
+                        if (ql_NganHang.TonTai_TaiKhoan_HoatDong()) {
+                            JOptionPane.showMessageDialog(this,
+                                    "❌ Chỉ được phép có duy nhất 1 tài khoản Hoạt Động.\n"
+                                    + "Vui lòng tắt trạng thái tài khoản hiện tại trước.");
+                            return;
+                        }
+                    }
+                }
+
                 DateTimeFormatter dinhDang = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 LocalDate localDate = LocalDate.parse(ngayTaoStr, dinhDang);
                 Date ngayTao = Date.valueOf(localDate);
@@ -293,13 +346,14 @@ public class Tao_Ma_QR extends javax.swing.JFrame {
                 NganHang nh = new NganHang(So_TaiKhoan, Ten_NganHang, TenChu_TaiKhoan, trangThai, ngayTao);
                 int result = ql_NganHang.Sua_NH(nh, TheoSo_TaiKhoan);
 
-                JOptionPane.showMessageDialog(this, result == 1 ? "✅ Thêm thành công!" : "❌ Thêm thất bại!");
+                JOptionPane.showMessageDialog(this, result == 1
+                        ? "✅ Sửa thành công!" : "❌ Sửa thất bại!");
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, "❌ Lỗi xử lý ngày tạo: " + e.getMessage());
+                JOptionPane.showMessageDialog(this, "❌ Lỗi xử lý: " + e.getMessage());
             }
         } else {
-            JOptionPane.showMessageDialog(this, "Vui Lòng Chọn Dữ Liệu Trên Bảng Danh Sách Tài Khoản Ngân Hàng.");
-            return;
+            JOptionPane.showMessageDialog(this,
+                    "Vui lòng chọn dữ liệu trên bảng danh sách tài khoản ngân hàng.");
         }
     }
 
@@ -336,6 +390,34 @@ public class Tao_Ma_QR extends javax.swing.JFrame {
             txt_NgayTao.setText(ngayTaoStr);
         }
     }
+
+//    private void capNhatTrangThai(String soTaiKhoan, String trangThaiMoi) {
+//        try {
+//            // Nếu muốn set sang Hoạt Động
+//            if ("Hoạt Động".equalsIgnoreCase(trangThaiMoi)) {
+//                // Kiểm tra đã có tài khoản hoạt động chưa
+//                if (ql_NganHang.TonTai_TaiKhoan_HoatDong()) {
+//                    JOptionPane.showMessageDialog(this,
+//                            "❌ Đã tồn tại một tài khoản ở trạng thái Hoạt Động.\n"
+//                            + "Vui lòng chuyển tài khoản đó về Không Hoạt Động trước.");
+//                    return;
+//                }
+//            }
+//
+//            // Nếu qua được check => tiến hành cập nhật
+//            int result = ql_NganHang.capNhatTrangThaiTaiKhoan(soTaiKhoan, trangThaiMoi);
+//
+//            if (result > 0) {
+//                JOptionPane.showMessageDialog(this, "✅ Cập nhật trạng thái thành công!");
+//            } else {
+//                JOptionPane.showMessageDialog(this, "❌ Cập nhật trạng thái thất bại!");
+//            }
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            JOptionPane.showMessageDialog(this, "❌ Lỗi khi cập nhật trạng thái: " + e.getMessage());
+//        }
+//    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -591,6 +673,11 @@ public class Tao_Ma_QR extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tbl_Danh_SachMa_QR.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbl_Danh_SachMa_QRMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tbl_Danh_SachMa_QR);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -656,7 +743,7 @@ public class Tao_Ma_QR extends javax.swing.JFrame {
         LocalDate currentDate = LocalDate.now();
         String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         txt_NgayTao.setText(formattedDate); // Ngày Tạo Mã QR
-        
+        FillToTable_NganHang();
     }//GEN-LAST:event_btn_LamMoiActionPerformed
 
     private void txt_SoTienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_SoTienActionPerformed
@@ -671,12 +758,19 @@ public class Tao_Ma_QR extends javax.swing.JFrame {
     private void btn_Them_Ma_QRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_Them_Ma_QRActionPerformed
         // TODO add your handling code here:
         Them_NganHang();
+        FillToTable_NganHang();
     }//GEN-LAST:event_btn_Them_Ma_QRActionPerformed
 
     private void btn_CapNhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_CapNhatActionPerformed
         // TODO add your handling code here:
         Sua_NganHang();
+        FillToTable_NganHang();
     }//GEN-LAST:event_btn_CapNhatActionPerformed
+
+    private void tbl_Danh_SachMa_QRMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_Danh_SachMa_QRMouseClicked
+        // TODO add your handling code here:
+        ShowDetail_NganHang();
+    }//GEN-LAST:event_tbl_Danh_SachMa_QRMouseClicked
 
     /**
      * @param args the command line arguments

@@ -8,6 +8,8 @@ import DBConnect.MyConnection;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -75,6 +77,7 @@ public class QL_NganHang {
         return 0;
     }
 
+    // Sửa Dữ Liệu ngân Hàng
     public int Sua_NH(NganHang nh, String TheoMa_NH) {
         String SQL = "UPDATE NGANHANG SET SOTAIKHOAN_NH = ?, TEN_NH = ?, TEN_CHU_NH = ?, TRANGTHAI = ?  , NGAYCAPNHATCUOI = ? WHERE SOTAIKHOAN_NH = ?";
         try {
@@ -94,6 +97,44 @@ public class QL_NganHang {
             e.printStackTrace();
         }
         return 0;
+    }
+
+    // Kiểm Tra Số Tài Khoản Đã Trùng
+    public boolean checkTrungSTK_DB(String stk) {
+        String sql = "SELECT COUNT(*) FROM NGANHANG WHERE SOTAIKHOAN_NH = ?";
+        try {
+            Connection connection = conn.DBConnect();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ps.setString(1, stk.trim());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next() && rs.getInt(1) > 0) {
+                return true; // Trùng
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(QL_NganHang.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    // Check Trạng Thái Của Ngân Hàng Không Hoạt Động Hoặc Hoạt Động
+    public boolean TonTai_TaiKhoan_HoatDong() {
+        String sql = "SELECT COUNT(*) FROM NGANHANG WHERE TRANGTHAI = N'Hoạt Động'";
+        try {
+            Connection connection = conn.DBConnect();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0; // true nếu đã tồn tại ít nhất 1 tài khoản hoạt động
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(QL_NganHang.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
     }
 
 }

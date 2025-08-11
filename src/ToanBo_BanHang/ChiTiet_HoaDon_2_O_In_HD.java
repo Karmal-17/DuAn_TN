@@ -38,6 +38,9 @@ public class ChiTiet_HoaDon_2_O_In_HD {
         this.SoLuong = SoLuong;
     }
 
-   
+   public double getThanhTien() {
+        return SanPham.getDonGia() * SoLuong;
+    }
+
 }
 

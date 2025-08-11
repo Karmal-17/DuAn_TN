@@ -61,7 +61,6 @@ public class QL_KhuyenMai_JFrame extends javax.swing.JFrame {
         rdo_HoatDong.setEnabled(false);
         rdo_KhongHoatDong.setEnabled(false);
         txt_DiemTichLuy.setEnabled(false);
-        txt_TheoPhanTram.setEnabled(false);
         txt_TienMat.setEnabled(false);
 
         // Sự Kiện Cho Ngày Bắt Đầu Và Ngày Kết thúc
@@ -278,7 +277,6 @@ public class QL_KhuyenMai_JFrame extends javax.swing.JFrame {
         txt_MoTa_KM.setText("");
         cbox_HinhThuc.setSelectedItem("Điểm Tích Luỹ");
         txt_DiemTichLuy.setValue(0);
-        txt_TheoPhanTram.setText("");
         txt_GiaTri_KM.setText("");
         txt_NgayBatDau_KM.setDate(null);
         txt_NgayKetThuc_KM.setDate(null);
@@ -325,7 +323,6 @@ public class QL_KhuyenMai_JFrame extends javax.swing.JFrame {
         // 🧮 Lấy các điều kiện theo hình thức
         float DiemYeuCau = (float) txt_DiemTichLuy.getValue();
         float TienMat = 0;
-        float PhanTram = 0;
 
         if (HinhThuc_KM.toLowerCase().contains("điểm")) {
             if (DiemYeuCau <= 0) {
@@ -343,17 +340,7 @@ public class QL_KhuyenMai_JFrame extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "❌ Số tiền không hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-        } else if (HinhThuc_KM.toLowerCase().contains("phần")) {
-            try {
-                PhanTram = Integer.parseInt(txt_TheoPhanTram.getText().trim());
-                if (PhanTram <= 0 || PhanTram > 100) {
-                    JOptionPane.showMessageDialog(this, "❌ Phần trăm khuyến mãi phải từ 1 đến 100!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, "❌ Phần trăm không hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
+
         } else if (HinhThuc_KM.toLowerCase().contains("null")) {
             JOptionPane.showMessageDialog(this, "❌ Hình Thức Không Được Để Là null!", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
@@ -392,9 +379,7 @@ public class QL_KhuyenMai_JFrame extends javax.swing.JFrame {
             dieuKien = DiemYeuCau;
         } else if (HinhThuc_KM.toLowerCase().contains("tiền")) {
             dieuKien = TienMat;
-        } else if (HinhThuc_KM.toLowerCase().contains("phần")) {
-            dieuKien = PhanTram;
-        }
+        } 
 
         KhuyenMai km = new KhuyenMai(Ma_KM, Ten_KM, MoTa_KM, HinhThuc_KM,
                 dieuKien, GiaTri_KM, Ngay_BD_KM, Ngay_KT_KM, TrangThai_KM);
@@ -470,7 +455,7 @@ public class QL_KhuyenMai_JFrame extends javax.swing.JFrame {
 
             } else if (hinhThucKM.equalsIgnoreCase("Tiền Mặt")) {
                 try {
-                    String TienMatString = txt_TheoPhanTram.getText().trim();
+                    String TienMatString = txt_TienMat.getText().trim();
                     if (!TienMatString.matches("\\d+(\\.\\d{1,2})?")) {
                         JOptionPane.showMessageDialog(this, "❌ Tiền mặt phải là số!");
                         return;
@@ -482,23 +467,6 @@ public class QL_KhuyenMai_JFrame extends javax.swing.JFrame {
                     }
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(this, "❌ Dữ liệu tiền mặt không hợp lệ!");
-                    return;
-                }
-
-            } else if (hinhThucKM.equalsIgnoreCase("Phần Trăm")) {
-                try {
-                    String phanTramString = txt_TheoPhanTram.getText().trim();
-                    if (!phanTramString.matches("\\d+(\\.\\d{1,2})?")) {
-                        JOptionPane.showMessageDialog(this, "❌ Phần trăm phải là số!");
-                        return;
-                    }
-                    GiaTri_YeuCau_KM = Float.parseFloat(phanTramString);
-                    if (GiaTri_YeuCau_KM <= 0 || GiaTri_YeuCau_KM > 100) {
-                        JOptionPane.showMessageDialog(this, "⚠️ Phần trăm phải từ 0 đến 100!");
-                        return;
-                    }
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(this, "❌ Dữ liệu phần trăm không hợp lệ!");
                     return;
                 }
 
@@ -560,11 +528,9 @@ public class QL_KhuyenMai_JFrame extends javax.swing.JFrame {
 
         // 🔄 Reset tất cả trước
         txt_TienMat.setText("0");
-        txt_TheoPhanTram.setText("0");
         txt_DiemTichLuy.setValue(0);
 
         txt_TienMat.setEnabled(false);
-        txt_TheoPhanTram.setEnabled(false);
         txt_DiemTichLuy.setEnabled(false);
 
         // 💰 Phân biệt theo hình thức KM
@@ -576,10 +542,7 @@ public class QL_KhuyenMai_JFrame extends javax.swing.JFrame {
         } else if (hinhThuc.contains("điểm")) {
             txt_DiemTichLuy.setValue(km.getGiaTri_YeuCau_KM());
             txt_DiemTichLuy.setEnabled(true);
-        } else if (hinhThuc.contains("phần")) {
-            txt_TheoPhanTram.setText(String.valueOf(km.getGiaTri_YeuCau_KM()));
-            txt_TheoPhanTram.setEnabled(true);
-        }
+        } 
 
         // 🎯 Giá trị khuyến mãi
         txt_GiaTri_KM.setText(String.valueOf(km.getGiaTri_KM()));
@@ -598,19 +561,15 @@ public class QL_KhuyenMai_JFrame extends javax.swing.JFrame {
 
         // Reset tất cả trước
         txt_TienMat.setEnabled(false);
-        txt_TheoPhanTram.setEnabled(false);
         txt_DiemTichLuy.setEnabled(false);
 
         txt_TienMat.setText("0");
-        txt_TheoPhanTram.setText("0");
         txt_DiemTichLuy.setValue(0);
 
         if (hinhThuc.equalsIgnoreCase("Tiền Mặt") || hinhThuc.contains("Tiền")) {
             txt_TienMat.setEnabled(true);
         } else if (hinhThuc.equalsIgnoreCase("Điểm Tích Luỹ") || hinhThuc.contains("Điểm")) {
             txt_DiemTichLuy.setEnabled(true);
-        } else if (hinhThuc.equalsIgnoreCase("Phần Trăm") || hinhThuc.contains("Phần")) {
-            txt_TheoPhanTram.setEnabled(true);
         } else {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn hình thức khuyến mãi hợp lệ!", "Thông báo", JOptionPane.WARNING_MESSAGE);
             txt_GiaTri_KM.setEnabled(false); // nếu có ô tổng giá trị khuyến mãi
@@ -660,7 +619,6 @@ public class QL_KhuyenMai_JFrame extends javax.swing.JFrame {
         txt_NgayBatDau_KM = new com.toedter.calendar.JDateChooser();
         txt_NgayKetThuc_KM = new com.toedter.calendar.JDateChooser();
         txt_DiemTichLuy = new javax.swing.JSpinner();
-        txt_TheoPhanTram = new javax.swing.JTextField();
         cbox_HinhThuc = new javax.swing.JComboBox<>();
         txt_TienMat = new javax.swing.JTextField();
         btn_DongTrang = new javax.swing.JButton();
@@ -842,8 +800,6 @@ public class QL_KhuyenMai_JFrame extends javax.swing.JFrame {
 
         txt_DiemTichLuy.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Theo Điểm"));
 
-        txt_TheoPhanTram.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Theo %"));
-
         cbox_HinhThuc.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "null", "Điểm Tích Luỹ", "Tiền Mặt", "Phần Trăm" }));
         cbox_HinhThuc.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -877,12 +833,9 @@ public class QL_KhuyenMai_JFrame extends javax.swing.JFrame {
                                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(18, 18, 18)
                                 .addGroup(NhapThongTin_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(NhapThongTin_PanelLayout.createSequentialGroup()
-                                        .addComponent(txt_TheoPhanTram, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(txt_TienMat, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addComponent(txt_DiemTichLuy, javax.swing.GroupLayout.PREFERRED_SIZE, 271, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txt_GiaTri_KM, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addComponent(txt_GiaTri_KM, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txt_TienMat, javax.swing.GroupLayout.PREFERRED_SIZE, 275, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(NhapThongTin_PanelLayout.createSequentialGroup()
                                 .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(22, 22, 22)
@@ -927,9 +880,7 @@ public class QL_KhuyenMai_JFrame extends javax.swing.JFrame {
                                 .addGap(9, 9, 9)
                                 .addComponent(cbox_HinhThuc, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addGroup(NhapThongTin_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(txt_TheoPhanTram, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txt_TienMat, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(txt_TienMat, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(txt_DiemTichLuy, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(18, 18, 18)
@@ -1126,7 +1077,6 @@ public class QL_KhuyenMai_JFrame extends javax.swing.JFrame {
     private com.toedter.calendar.JDateChooser txt_NgayBatDau_KM;
     private com.toedter.calendar.JDateChooser txt_NgayKetThuc_KM;
     private javax.swing.JTextField txt_Ten_KM;
-    private javax.swing.JTextField txt_TheoPhanTram;
     private javax.swing.JTextField txt_TienMat;
     // End of variables declaration//GEN-END:variables
 }

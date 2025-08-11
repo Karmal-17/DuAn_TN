@@ -9,41 +9,27 @@ package ToanBo_SanPham;
  * @author ADMIN
  */
 public class SanPham_3_O_In_HD {
-    private String Ma_SanPham;
-    private String Ten_SanPham;
-    private double DonGia_SanPham;
 
-    public SanPham_3_O_In_HD() {
+    private String Ma_SP;
+    private String Ten_SP;
+    private float DonGia;
+
+    public SanPham_3_O_In_HD(String Ma_SP, String Ten_SP, float DonGia) {
+        this.Ma_SP = Ma_SP;
+        this.Ten_SP = Ten_SP;
+        this.DonGia = DonGia;
     }
 
-    public SanPham_3_O_In_HD(String Ma_SanPham, String Ten_SanPham, double DonGia_SanPham) {
-        this.Ma_SanPham = Ma_SanPham;
-        this.Ten_SanPham = Ten_SanPham;
-        this.DonGia_SanPham = DonGia_SanPham;
+    // Getters
+    public String getMa_SP() {
+        return Ma_SP;
     }
 
-    public String getMa_SanPham() {
-        return Ma_SanPham;
+    public String getTen_SP() {
+        return Ten_SP;
     }
 
-    public void setMa_SanPham(String Ma_SanPham) {
-        this.Ma_SanPham = Ma_SanPham;
+    public float getDonGia() {
+        return DonGia;
     }
-
-    public String getTen_SanPham() {
-        return Ten_SanPham;
-    }
-
-    public void setTen_SanPham(String Ten_SanPham) {
-        this.Ten_SanPham = Ten_SanPham;
-    }
-
-    public double getDonGia_SanPham() {
-        return DonGia_SanPham;
-    }
-
-    public void setDonGia_SanPham(double DonGia_SanPham) {
-        this.DonGia_SanPham = DonGia_SanPham;
-    }
-
 }
