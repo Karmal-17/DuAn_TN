@@ -55,7 +55,7 @@ public class QL_NganHang {
     }
 
     // Thêm Ngân Hàng
-    public int Them_TK(NganHang nh) {
+    public int Them_NH(NganHang nh) {
         String SQL = "INSERT INTO NGANHANG(SOTAIKHOAN_NH, TEN_NH, TEN_CHU_NH, TRANGTHAI, NGAYCAPNHATCUOI) VALUES (?, ?, ?, ?, ?)";
         try {
             Connection conect = conn.DBConnect();
@@ -75,7 +75,7 @@ public class QL_NganHang {
         return 0;
     }
 
-    public int Sua_TK(NganHang nh, String TheoMa_NH) {
+    public int Sua_NH(NganHang nh, String TheoMa_NH) {
         String SQL = "UPDATE NGANHANG SET SOTAIKHOAN_NH = ?, TEN_NH = ?, TEN_CHU_NH = ?, TRANGTHAI = ?  , NGAYCAPNHATCUOI = ? WHERE SOTAIKHOAN_NH = ?";
         try {
             Connection conect = conn.DBConnect();

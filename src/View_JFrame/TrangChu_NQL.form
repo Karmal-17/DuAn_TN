@@ -32,15 +32,16 @@
               <Component id="ThanhChucNang_Panel" min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-                      <Component id="lb_DanhMuc" min="-2" pref="425" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" attributes="0">
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="TrangChungChuyen" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+                      <Component id="lb_DanhMuc" min="-2" pref="425" max="-2" attributes="0"/>
+                      <EmptySpace min="92" max="32767" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace max="32767" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
                   <Group type="102" attributes="0">
@@ -284,7 +285,7 @@
                   <Group type="103" groupAlignment="1" attributes="0">
                       <Component id="btn_DangXuat" max="32767" attributes="0"/>
                       <Component id="btn_ThongTinCaNhap" max="32767" attributes="0"/>
-                      <Component id="btn_ThongTinCaNhap1" max="32767" attributes="0"/>
+                      <Component id="btn_TaoMa_QR" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -296,7 +297,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="btn_ThongTinCaNhap" min="-2" pref="51" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                  <Component id="btn_ThongTinCaNhap1" min="-2" pref="45" max="-2" attributes="0"/>
+                  <Component id="btn_TaoMa_QR" min="-2" pref="45" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="btn_DangXuat" min="-2" pref="52" max="-2" attributes="0"/>
                   <EmptySpace pref="146" max="32767" attributes="0"/>
@@ -327,7 +328,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_DangXuatActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="btn_ThongTinCaNhap1">
+        <Component class="javax.swing.JButton" name="btn_TaoMa_QR">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="cc" green="ff" red="cc" type="rgb"/>
@@ -335,8 +336,11 @@
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Segoe UI" size="14" style="1"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="M&#xe3; QR"/>
+            <Property name="text" type="java.lang.String" value="T&#x1ea1;o QR"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_TaoMa_QRActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

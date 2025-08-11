@@ -26,6 +26,7 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.table.DefaultTableModel;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.sql.*;
 
 /**
  *
@@ -46,6 +47,7 @@ public class Tao_Ma_QR extends javax.swing.JFrame {
         LocalDate currentDate = LocalDate.now();
         String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         txt_NgayTao.setText(formattedDate);
+        txt_NgayTao.setEditable(false);
         Initable_NganHang();
         FillToTable_NganHang();
 //
@@ -217,11 +219,122 @@ public class Tao_Ma_QR extends javax.swing.JFrame {
     }
 
     public void Them_NganHang() {
-        String So_TaiKhoan = txt_SoTaiKhoan.getText();
-        String Ten_TaiKhoan = cbox_Ten_Ngan_Hang.getSelectedItem().toString().trim();
-        String Ten_Chu_TaiKhoan = txt_Ten_TaiKhoan.getText();
-        String TrangThai = rdo_KhongHoatDong.isSelected() ? "Không Hoạt Động" : "Đang Hoạt Động";
+        String So_TaiKhoan = txt_SoTaiKhoan.getText().trim();
+        if (So_TaiKhoan.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Số tài khoản không được để trống.");
+            return;
+        }
 
+        String Ten_NganHang = cbox_Ten_Ngan_Hang.getSelectedItem().toString().trim();
+
+        String TenChu_TaiKhoan = txt_Ten_TaiKhoan.getText().trim();
+        if (TenChu_TaiKhoan.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Tên chủ tài khoản không được để trống.");
+            return;
+        }
+
+        String ngayTaoStr = txt_NgayTao.getText().trim();
+        if (!ngayTaoStr.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            JOptionPane.showMessageDialog(this, "Ngày tạo phải đúng định dạng yyyy-MM-dd.");
+            return;
+        }
+
+        String trangThai = "Không Hoạt Động"; // Mặc định
+
+        try {
+            DateTimeFormatter dinhDang = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDate localDate = LocalDate.parse(ngayTaoStr, dinhDang);
+            Date ngayTao = Date.valueOf(localDate);
+
+            NganHang nh = new NganHang(So_TaiKhoan, Ten_NganHang, TenChu_TaiKhoan, trangThai, ngayTao);
+            int result = ql_NganHang.Them_NH(nh);
+            int Choice = JOptionPane.showConfirmDialog(this, "Vui Lòng Kiểm Tra Lại Toàn Bộ Thông Tin Tài Khoản Bạn Vừa Nhập ?"
+                    + "\n Nhấn - YES - Nếu Đã Đúng Thông Tin."
+                    + "\n Nhấn - NO - Để Xem Lại Tài Khoản Nhé."
+                    + "\n Fake AL Fresco’s Xin Cảm Ơn." , "Xác Nhận Tạo Tài Khoản Ngân Hàng." , JOptionPane.YES_NO_OPTION);
+            JOptionPane.showMessageDialog(this, result == 1 ? "✅ Thêm thành công!" : "❌ Thêm thất bại!");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "❌ Lỗi xử lý ngày tạo: " + e.getMessage());
+        }
+    }
+
+    public void Sua_NganHang() {
+        Index = tbl_Danh_SachMa_QR.getSelectedRow();
+        if (Index >= 0) {
+            String TheoSo_TaiKhoan = ql_NganHang.Get_All().get(Index).getSo_TaiKhoan();
+
+            String So_TaiKhoan = txt_SoTaiKhoan.getText().trim();
+            if (So_TaiKhoan.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Số tài khoản không được để trống.");
+                return;
+            }
+
+            String Ten_NganHang = cbox_Ten_Ngan_Hang.getSelectedItem().toString().trim();
+
+            String TenChu_TaiKhoan = txt_Ten_TaiKhoan.getText().trim();
+            if (TenChu_TaiKhoan.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Tên chủ tài khoản không được để trống.");
+                return;
+            }
+
+            String ngayTaoStr = txt_NgayTao.getText().trim();
+            if (!ngayTaoStr.matches("\\d{4}-\\d{2}-\\d{2}")) {
+                JOptionPane.showMessageDialog(this, "Ngày tạo phải đúng định dạng yyyy-MM-dd.");
+                return;
+            }
+
+            String trangThai = rdo_HoatDong.isSelected() ? "Hoạt Động" : "Không Hoạt Động"; // Mặc định
+
+            try {
+                DateTimeFormatter dinhDang = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate localDate = LocalDate.parse(ngayTaoStr, dinhDang);
+                Date ngayTao = Date.valueOf(localDate);
+
+                NganHang nh = new NganHang(So_TaiKhoan, Ten_NganHang, TenChu_TaiKhoan, trangThai, ngayTao);
+                int result = ql_NganHang.Sua_NH(nh, TheoSo_TaiKhoan);
+
+                JOptionPane.showMessageDialog(this, result == 1 ? "✅ Thêm thành công!" : "❌ Thêm thất bại!");
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "❌ Lỗi xử lý ngày tạo: " + e.getMessage());
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Vui Lòng Chọn Dữ Liệu Trên Bảng Danh Sách Tài Khoản Ngân Hàng.");
+            return;
+        }
+    }
+
+    public void ShowDetail_NganHang() {
+        Index = tbl_Danh_SachMa_QR.getSelectedRow();
+        if (Index >= 0) {
+            NganHang nh = ql_NganHang.Get_All().get(Index);
+
+            // Số Tài Khoản
+            txt_SoTaiKhoan.setText(nh.getSo_TaiKhoan());
+
+            // Tên Ngân Hàng
+            cbox_Ten_Ngan_Hang.setSelectedItem(nh.getTen_NganHang());
+
+            // Tên Chủ Tài Khoản
+            txt_Ten_TaiKhoan.setText(nh.getTen_Chu_TK());
+
+            // Trạng Thái
+            String trangThai = nh.getTrang_Thai();
+            if (trangThai.equalsIgnoreCase("Hoạt Động")) {
+                rdo_HoatDong.setSelected(true);
+                rdo_KhongHoatDong.setSelected(false);
+            } else if (trangThai.equalsIgnoreCase("Không Hoạt Động")) {
+                rdo_KhongHoatDong.setSelected(true);
+                rdo_HoatDong.setSelected(false);
+            } else {
+                JOptionPane.showMessageDialog(this, "Chưa xác định trạng thái của tài khoản.");
+            }
+
+            // Ngày Tạo
+            Date ngayTao = nh.getNgayTao();
+            DateTimeFormatter dinhDang = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            String ngayTaoStr = ngayTao.toLocalDate().format(dinhDang);
+            txt_NgayTao.setText(ngayTaoStr);
+        }
     }
 
     /**
@@ -233,7 +346,7 @@ public class Tao_Ma_QR extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        buttonGroup1 = new javax.swing.ButtonGroup();
+        btg_TrangThai = new javax.swing.ButtonGroup();
         btn_LamMoi = new javax.swing.JButton();
         Test_Panel = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
@@ -255,8 +368,8 @@ public class Tao_Ma_QR extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         rdo_HoatDong = new javax.swing.JRadioButton();
         rdo_KhongHoatDong = new javax.swing.JRadioButton();
-        jButton2 = new javax.swing.JButton();
-        btn_Sua = new javax.swing.JButton();
+        btn_Them_Ma_QR = new javax.swing.JButton();
+        btn_CapNhat = new javax.swing.JButton();
         btn_DongTrang = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -303,43 +416,43 @@ public class Tao_Ma_QR extends javax.swing.JFrame {
                 .addGroup(Test_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(Test_PanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(Test_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(Test_PanelLayout.createSequentialGroup()
-                                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txt_NoiDung))
-                            .addGroup(Test_PanelLayout.createSequentialGroup()
-                                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txt_SoTien, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(Test_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(Test_PanelLayout.createSequentialGroup()
                                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(57, 57, 57)
-                                .addComponent(lb_HienMa_QR, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                .addComponent(lb_HienMa_QR, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(Test_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(Test_PanelLayout.createSequentialGroup()
+                                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(txt_NoiDung))
+                                .addGroup(Test_PanelLayout.createSequentialGroup()
+                                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(txt_SoTien, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                     .addGroup(Test_PanelLayout.createSequentialGroup()
-                        .addGap(97, 97, 97)
+                        .addGap(98, 98, 98)
                         .addComponent(btn_TaoMa_QR, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(47, 47, 47))
         );
         Test_PanelLayout.setVerticalGroup(
             Test_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Test_PanelLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(Test_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(Test_PanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(lb_HienMa_QR, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lb_HienMa_QR, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(Test_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txt_SoTien, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(Test_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txt_NoiDung, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btn_TaoMa_QR, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(24, 24, 24))
+                .addContainerGap())
         );
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Nhập Thông Tin Ngân Hàng"));
@@ -367,13 +480,25 @@ public class Tao_Ma_QR extends javax.swing.JFrame {
         jLabel5.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel5.setText("Tên Ngân Hàng: ");
 
+        btg_TrangThai.add(rdo_HoatDong);
         rdo_HoatDong.setText("Đang Hoạt Động");
 
+        btg_TrangThai.add(rdo_KhongHoatDong);
         rdo_KhongHoatDong.setText("Không Hoạt Động");
 
-        jButton2.setText("Thêm Mã QR");
+        btn_Them_Ma_QR.setText("Thêm Mã QR");
+        btn_Them_Ma_QR.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_Them_Ma_QRActionPerformed(evt);
+            }
+        });
 
-        btn_Sua.setText("Cập Nhật");
+        btn_CapNhat.setText("Cập Nhật");
+        btn_CapNhat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_CapNhatActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -410,9 +535,9 @@ public class Tao_Ma_QR extends javax.swing.JFrame {
                                 .addComponent(txt_Ten_TaiKhoan, javax.swing.GroupLayout.PREFERRED_SIZE, 331, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                         .addGap(46, 46, 46)
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(66, 66, 66)
-                        .addComponent(btn_Sua, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btn_Them_Ma_QR, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(42, 42, 42)
+                        .addComponent(btn_CapNhat, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(18, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -441,8 +566,8 @@ public class Tao_Ma_QR extends javax.swing.JFrame {
                     .addComponent(txt_NgayTao, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_Sua, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btn_Them_Ma_QR, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_CapNhat, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(31, Short.MAX_VALUE))
         );
 
@@ -486,8 +611,8 @@ public class Tao_Ma_QR extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(Test_Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Test_Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -495,8 +620,8 @@ public class Tao_Ma_QR extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btn_DongTrang, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btn_LamMoi, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 298, Short.MAX_VALUE)))
+                        .addComponent(btn_LamMoi, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 242, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -509,10 +634,11 @@ public class Tao_Ma_QR extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btn_LamMoi, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(137, 137, 137)
+                        .addGap(9, 9, 9)
+                        .addComponent(btn_LamMoi, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(116, 116, 116)
                         .addComponent(btn_DongTrang, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(Test_Panel, javax.swing.GroupLayout.PREFERRED_SIZE, 235, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(Test_Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -521,10 +647,16 @@ public class Tao_Ma_QR extends javax.swing.JFrame {
 
     private void btn_LamMoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_LamMoiActionPerformed
         // TODO add your handling code here:
-        txt_SoTaiKhoan.setText("");
-        cbox_Ten_Ngan_Hang.setSelectedItem("Vietcombank");
-        txt_SoTien.setText("");
-        lb_HienMa_QR.setText("");
+        txt_SoTaiKhoan.setText(""); // Số Tài Khoản Ngân Hàng
+        cbox_Ten_Ngan_Hang.setSelectedItem("Vietcombank"); // Tên Ngân Hàng
+        txt_SoTien.setText(""); // Số Tiền
+        txt_Ten_TaiKhoan.setText(""); // Tên Tài Khoản
+        btg_TrangThai.clearSelection(); // Trạng Thái
+        lb_HienMa_QR.setText(""); // Hiện Mã QR
+        LocalDate currentDate = LocalDate.now();
+        String formattedDate = currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        txt_NgayTao.setText(formattedDate); // Ngày Tạo Mã QR
+        
     }//GEN-LAST:event_btn_LamMoiActionPerformed
 
     private void txt_SoTienActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_SoTienActionPerformed
@@ -535,6 +667,16 @@ public class Tao_Ma_QR extends javax.swing.JFrame {
         // TODO add your handling code here:
         dispose();
     }//GEN-LAST:event_btn_DongTrangActionPerformed
+
+    private void btn_Them_Ma_QRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_Them_Ma_QRActionPerformed
+        // TODO add your handling code here:
+        Them_NganHang();
+    }//GEN-LAST:event_btn_Them_Ma_QRActionPerformed
+
+    private void btn_CapNhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_CapNhatActionPerformed
+        // TODO add your handling code here:
+        Sua_NganHang();
+    }//GEN-LAST:event_btn_CapNhatActionPerformed
 
     /**
      * @param args the command line arguments
@@ -573,13 +715,13 @@ public class Tao_Ma_QR extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Test_Panel;
+    private javax.swing.ButtonGroup btg_TrangThai;
+    private javax.swing.JButton btn_CapNhat;
     private javax.swing.JButton btn_DongTrang;
     private javax.swing.JButton btn_LamMoi;
-    private javax.swing.JButton btn_Sua;
     private javax.swing.JButton btn_TaoMa_QR;
-    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JButton btn_Them_Ma_QR;
     private javax.swing.JComboBox<String> cbox_Ten_Ngan_Hang;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;

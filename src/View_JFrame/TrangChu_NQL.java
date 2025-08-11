@@ -14,6 +14,7 @@ import java.awt.BorderLayout;
 import ToanBo_SanPham.QL_SanPham_ChiTiet_Panel;
 import javax.swing.JOptionPane;
 import ToanBo_BanHang.QL_BanHang_Panel;
+import ToanBo_BanHang.Tao_Ma_QR;
 import ToanBo_KhachHang.QL_KhachHang_TimKiem_Panel;
 import ToanBo_NguyenLieu.QL_ChiTiet_NguyenLieu;
 import ToanBo_TaiKhoan.QL_Login;
@@ -150,7 +151,7 @@ public class TrangChu_NQL extends javax.swing.JFrame {
         CaiDat = new javax.swing.JPanel();
         btn_ThongTinCaNhap = new javax.swing.JButton();
         btn_DangXuat = new javax.swing.JButton();
-        btn_ThongTinCaNhap1 = new javax.swing.JButton();
+        btn_TaoMa_QR = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         btn_CaiDat = new javax.swing.JToggleButton();
         jPanel4 = new javax.swing.JPanel();
@@ -313,9 +314,14 @@ public class TrangChu_NQL extends javax.swing.JFrame {
             }
         });
 
-        btn_ThongTinCaNhap1.setBackground(new java.awt.Color(204, 255, 204));
-        btn_ThongTinCaNhap1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        btn_ThongTinCaNhap1.setText("Mã QR");
+        btn_TaoMa_QR.setBackground(new java.awt.Color(204, 255, 204));
+        btn_TaoMa_QR.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btn_TaoMa_QR.setText("Tạo QR");
+        btn_TaoMa_QR.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_TaoMa_QRActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout CaiDatLayout = new javax.swing.GroupLayout(CaiDat);
         CaiDat.setLayout(CaiDatLayout);
@@ -326,7 +332,7 @@ public class TrangChu_NQL extends javax.swing.JFrame {
                 .addGroup(CaiDatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(btn_DangXuat, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btn_ThongTinCaNhap, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btn_ThongTinCaNhap1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btn_TaoMa_QR, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         CaiDatLayout.setVerticalGroup(
@@ -335,7 +341,7 @@ public class TrangChu_NQL extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(btn_ThongTinCaNhap, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(20, 20, 20)
-                .addComponent(btn_ThongTinCaNhap1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btn_TaoMa_QR, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btn_DangXuat, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(146, Short.MAX_VALUE))
@@ -388,12 +394,13 @@ public class TrangChu_NQL extends javax.swing.JFrame {
                 .addComponent(ThanhChucNang_Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(lb_DanhMuc, javax.swing.GroupLayout.PREFERRED_SIZE, 425, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(TrangChungChuyen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(TrangChungChuyen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(lb_DanhMuc, javax.swing.GroupLayout.PREFERRED_SIZE, 425, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
@@ -537,6 +544,13 @@ public class TrangChu_NQL extends javax.swing.JFrame {
         tncn.setLocationRelativeTo(null); // Canh giữa màn hình (tuỳ chọn)
     }//GEN-LAST:event_btn_ThongTinCaNhapActionPerformed
 
+    private void btn_TaoMa_QRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_TaoMa_QRActionPerformed
+        // TODO add your handling code here:
+        Tao_Ma_QR Tao_MaQR = new Tao_Ma_QR();
+        Tao_MaQR.setVisible(true); // Hiển thị JFrame
+        Tao_MaQR.setLocationRelativeTo(null);
+    }//GEN-LAST:event_btn_TaoMa_QRActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -587,9 +601,9 @@ public class TrangChu_NQL extends javax.swing.JFrame {
     private javax.swing.JButton btn_NguyenLieu;
     private javax.swing.JButton btn_SanPham;
     private javax.swing.JButton btn_TaiKhoan;
+    private javax.swing.JButton btn_TaoMa_QR;
     private javax.swing.JButton btn_ThongKeDoanhThu;
     private javax.swing.JButton btn_ThongTinCaNhap;
-    private javax.swing.JButton btn_ThongTinCaNhap1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;

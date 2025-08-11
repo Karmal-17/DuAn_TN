@@ -34,7 +34,7 @@ public class QL_TaiKhoan_TatCa_JFrame extends javax.swing.JFrame {
         FillToTable();
         txt_Ngay_DK.setEditable(false);
         LocalDate ngayHienTai = LocalDate.now();
-        DateTimeFormatter dinhDang = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter dinhDang = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         // Hiển thị vào textField
         txt_Ngay_DK.setText(ngayHienTai.format(dinhDang));
@@ -61,7 +61,7 @@ public class QL_TaiKhoan_TatCa_JFrame extends javax.swing.JFrame {
         txt_Ten_TK.setText("");
         txt_SDT_TK.setText("");
         LocalDate ngayHienTai = LocalDate.now();
-        DateTimeFormatter dinhDang = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter dinhDang = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         // Hiển thị vào textField
         txt_Ngay_DK.setText(ngayHienTai.format(dinhDang));
@@ -164,7 +164,7 @@ public class QL_TaiKhoan_TatCa_JFrame extends javax.swing.JFrame {
         }
 
         try {
-            DateTimeFormatter DinhDang = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            DateTimeFormatter DinhDang = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDate localDate = LocalDate.parse(txt_Ngay_DK.getText(), DinhDang);
             Date NgayDK = Date.valueOf(localDate);
 
@@ -213,7 +213,7 @@ public class QL_TaiKhoan_TatCa_JFrame extends javax.swing.JFrame {
 
             // Chuyển ngày đăng ký từ chuỗi sang java.sql.Date
             try {
-                DateTimeFormatter DinhDang = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                DateTimeFormatter DinhDang = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 LocalDate localDate = LocalDate.parse(txt_Ngay_DK.getText(), DinhDang);
                 Date NgayDK = Date.valueOf(localDate);
 
@@ -262,7 +262,7 @@ public class QL_TaiKhoan_TatCa_JFrame extends javax.swing.JFrame {
         txt_DiaChi.setText(tk.getDiaChi_TK());
 
         // Định dạng ngày
-        DateTimeFormatter dinhDang = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter dinhDang = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         txt_Ngay_DK.setText(tk.getNgay_DK_TK().toLocalDate().format(dinhDang));
 
         // Trạng thái
