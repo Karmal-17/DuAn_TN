@@ -11,6 +11,7 @@ import ToanBo_SanPham.SanPham_3_O_In_HD;
  * @author ADMIN
  */
 public class ChiTiet_HoaDon_2_O_In_HD {
+
     private SanPham_3_O_In_HD SanPham;
     private int SoLuong;
 
@@ -38,9 +39,17 @@ public class ChiTiet_HoaDon_2_O_In_HD {
         this.SoLuong = SoLuong;
     }
 
-   public double getThanhTien() {
-        return SanPham.getDonGia() * SoLuong;
+//    public float getThanhTien() {
+//        return SanPham.getDonGia() * SoLuong;
+//    }
+    private Float ThanhTien;
+
+    public void setThanhTien(float thanhTien) {
+        this.ThanhTien = thanhTien;
+    }
+
+    public float getThanhTien() {
+        return ThanhTien;
     }
 
 }
-

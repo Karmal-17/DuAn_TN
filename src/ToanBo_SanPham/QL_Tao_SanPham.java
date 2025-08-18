@@ -327,4 +327,37 @@ public class QL_Tao_SanPham {
 
         return List_SP;
     }
+
+    public List<SanPham> locSanPhamTheoKhoangGia(float giaBatDau, float giaKetThuc) {
+        List<SanPham> danhSach = new ArrayList<>();
+        String sql = "SELECT MA_SP , TENSP , MOTA , DONGIA , MA_LOAI , HINHANH , NGAYTAO , TRANGTHAI FROM SANPHAM WHERE TRANGTHAI = N'Đang Bán' AND DONGIA BETWEEN ? AND ? ";
+
+        try {
+            Connection connection = conn.DBConnect();
+            PreparedStatement ps = connection.prepareStatement(sql);
+
+            ps.setFloat(1, giaBatDau);
+            ps.setFloat(2, giaKetThuc);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                SanPham sp = new SanPham();
+
+                sp.setMa_SP(rs.getString("MA_SP"));
+                sp.setTen_SP(rs.getString("TEN_SP"));
+                sp.setMoTa_SP(rs.getString("MOTA"));
+                sp.setDonGia_SP(rs.getFloat("DONGIA"));
+                sp.setMa_LSP(rs.getString("MA_LSP"));
+                sp.setHinhAnh_SP(rs.getString("HINHANH"));
+                sp.setNgayTao_SP(rs.getDate("NGAYTAO"));
+                sp.setTrangThai_SP(rs.getString("TRANGTHAI"));
+                danhSach.add(sp);
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return danhSach;
+    }
+
 }

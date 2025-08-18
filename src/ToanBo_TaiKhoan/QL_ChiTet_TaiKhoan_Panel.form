@@ -27,7 +27,7 @@
                   <Component id="Chua_Table_Panel" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="TimKiemTheoTen_Panel" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace pref="204" max="32767" attributes="0"/>
                       <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -325,11 +325,7 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="btn_Tao_TatCa_TK" min="-2" pref="185" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
-                  <Component id="btn_ShowChiTiet_TaiKhoan" min="-2" pref="177" max="-2" attributes="0"/>
-                  <EmptySpace pref="41" max="32767" attributes="0"/>
-                  <Component id="btn_XuatDanhSach" min="-2" pref="154" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
                   <Component id="btn_ReSet" min="-2" pref="154" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
               </Group>
@@ -339,9 +335,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
                   <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="btn_ShowChiTiet_TaiKhoan" alignment="3" min="-2" pref="57" max="-2" attributes="0"/>
                       <Component id="btn_Tao_TatCa_TK" alignment="3" min="-2" pref="57" max="-2" attributes="0"/>
-                      <Component id="btn_XuatDanhSach" alignment="3" min="-2" pref="57" max="-2" attributes="0"/>
                       <Component id="btn_ReSet" alignment="3" min="-2" pref="57" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
@@ -357,16 +351,6 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_Tao_TatCa_TKActionPerformed"/>
           </Events>
-        </Component>
-        <Component class="javax.swing.JButton" name="btn_ShowChiTiet_TaiKhoan">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Chi Ti&#x1ebf;t T&#xe0;i Kho&#x1ea3;n"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JButton" name="btn_XuatDanhSach">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Xu&#x1ea5;t Danh S&#xe1;ch"/>
-          </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="btn_ReSet">
           <Properties>

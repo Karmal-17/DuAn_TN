@@ -240,7 +240,6 @@ public class QL_ChiTiet_NguyenLieu extends javax.swing.JPanel {
         txt_Ngay_KT = new com.toedter.calendar.JDateChooser();
         btn_Reset = new javax.swing.JButton();
         btn_TaoNL = new javax.swing.JButton();
-        btn_TaoNL1 = new javax.swing.JButton();
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Bảng Danh Sách Nguyên Liệu"));
 
@@ -383,14 +382,6 @@ public class QL_ChiTiet_NguyenLieu extends javax.swing.JPanel {
             }
         });
 
-        btn_TaoNL1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icon/Show_NL.png"))); // NOI18N
-        btn_TaoNL1.setText("Show NL");
-        btn_TaoNL1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_TaoNL1ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -404,8 +395,6 @@ public class QL_ChiTiet_NguyenLieu extends javax.swing.JPanel {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(btn_TaoNL)
-                                .addGap(36, 36, 36)
-                                .addComponent(btn_TaoNL1, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(btn_Reset, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
@@ -420,7 +409,6 @@ public class QL_ChiTiet_NguyenLieu extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btn_TaoNL, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btn_TaoNL1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btn_Reset, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -479,10 +467,6 @@ public class QL_ChiTiet_NguyenLieu extends javax.swing.JPanel {
 
     }//GEN-LAST:event_txt_TimKiemActionPerformed
 
-    private void btn_TaoNL1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_TaoNL1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_TaoNL1ActionPerformed
-
     private void btn_LocNLActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_LocNLActionPerformed
         // TODO add your handling code here:
         Loc_NL();
@@ -494,7 +478,6 @@ public class QL_ChiTiet_NguyenLieu extends javax.swing.JPanel {
     private javax.swing.JButton btn_LocNL;
     private javax.swing.JButton btn_Reset;
     private javax.swing.JButton btn_TaoNL;
-    private javax.swing.JButton btn_TaoNL1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

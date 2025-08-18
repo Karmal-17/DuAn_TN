@@ -272,9 +272,6 @@
           </Layout>
           <SubComponents>
             <Component class="javax.swing.JLabel" name="lb_HienAnh">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="jLabel7"/>
-              </Properties>
             </Component>
           </SubComponents>
         </Container>

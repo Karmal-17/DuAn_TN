@@ -54,6 +54,34 @@ public class QL_ChiTiet_KhuyenMai_Panel extends javax.swing.JPanel {
                 hienThiKhuyenMaiTheoTrangThai(false);
             }
         });
+
+        btn_Loc_KM.addActionListener(e -> {
+            java.util.Date ngayBatDau = txt_HienThiNgay_BD.getDate();
+            java.util.Date ngayKetThuc = txt_HienThiNgay_KT.getDate();
+
+            // Kiểm tra ngày bắt đầu
+            if (ngayBatDau == null) {
+                JOptionPane.showMessageDialog(null, "Vui lòng chọn ngày bắt đầu khuyến mãi!");
+                return;
+            }
+
+            // Kiểm tra ngày kết thúc
+            if (ngayKetThuc == null) {
+                JOptionPane.showMessageDialog(null, "Vui lòng chọn ngày kết thúc khuyến mãi!");
+                return;
+            }
+
+            // Kiểm tra ngày kết thúc không trước ngày bắt đầu
+            if (ngayKetThuc.before(ngayBatDau)) {
+                JOptionPane.showMessageDialog(null, "Ngày kết thúc không được trước ngày bắt đầu!");
+                txt_HienThiNgay_KT.setDate(null); // hoặc txt_HienThiNgay_KT.setDate(ngayBatDau);
+                return;
+            }
+
+            // ✅ Nếu hợp lệ, tiếp tục xử lý lọc khuyến mãi
+            // Ví dụ: gọi hàm lọc dữ liệu từ cơ sở dữ liệu theo khoảng thời gian
+            // locKhuyenMaiTheoNgay(ngayBatDau, ngayKetThuc);
+        });
     }
 
     // Hiển Thị Khuyến Mãi

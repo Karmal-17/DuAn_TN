@@ -5,6 +5,7 @@
 package ToanBo_BanHang;
 
 import DBConnect.Chua_Bien;
+import ToanBo_KhachHang.KhachHang_3_O_In_HD;
 import ToanBo_KhachHang.KhachHang_4_O;
 import ToanBo_SanPham.SanPham_6_O;
 import javax.swing.table.DefaultTableModel;
@@ -46,9 +47,19 @@ import ToanBo_SanPham.SanPham_5_O;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.table.TableCellRenderer;
 import ToanBo_KhuyenMai.KhuyenMai;
+import ToanBo_SanPham.HoaDon_PDF;
+import ToanBo_SanPham.SanPham_3_O_In_HD;
+import ToanBo_TaiKhoan.Tai_Khoan_3_O_In_HD;
+import com.itextpdf.layout.property.HorizontalAlignment;
+import java.awt.Desktop;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.util.ArrayList;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -100,8 +111,6 @@ public class QL_BanHang_Panel extends javax.swing.JPanel {
         txt_ThoiGianTao.setEditable(false);
 
         // Phần Trạng Thái Thanh Toán
-        
-        
         // Phần Có Muốn Tạo Hoá Đơn Hay Không
         btn_Tao_HD.addActionListener(e -> {
             if (btn_Tao_HD.isSelected()) {
@@ -209,7 +218,10 @@ public class QL_BanHang_Panel extends javax.swing.JPanel {
 
         // Tự Động Khoá Khi Trạng Thái Đã Thanh Toán
         // Khoá In Hoá Đơn
-        btn_InHoaDon.setEnabled(false);
+        String Ma_TK = Chua_Bien.Ma_TK;
+        txt_Ma_TK.setText(Ma_TK);
+        txt_Ma_TK.setEditable(false);
+//        btn_InHoaDon.setEnabled(false);
     }
 
     // Phần Tự Động Khoá Khi Mà Trạng Thái Hoá Đơn Đã Thanh Toán
@@ -381,14 +393,13 @@ public class QL_BanHang_Panel extends javax.swing.JPanel {
 //            Ds_LSP.addTab(loai.getTen_LSP(), scroll);
 //        }
 //    }
-
     // Tự Động Tạo Hoá Đơn Mới
     public void TuDong_NhapMa_HD() {
         String Ma_HD = QL_Tao_HD.taoMaHoaDonMoi();
         txt_MaHD.setText(Ma_HD);
     }
 
-//    public void Initable_HD() {
+    //    public void Initable_HD() {
 //        TableModel_HD = new DefaultTableModel();
 //        String[] cols = {"Mã HD", "Mã TK", "Ngày Tạo", "Tổng Tiền", "Hình Thức TT", "Trạng Thái", "Mã KM", "SOTIENCANTRA", "Mã KH", "Tích Điểm"};
 //        TableModel_HD.setColumnIdentifiers(cols);
@@ -457,7 +468,6 @@ public class QL_BanHang_Panel extends javax.swing.JPanel {
         DateTimeFormatter dinhDang = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         txt_ThoiGianTao.setText(thoiGianHienTai.format(dinhDang));
-        txt_Ma_TK.setText("");
         btg_HinhThuc_TT.clearSelection();
         txt_MaHD.setText("");
         txt_Ma_KH.setText("");
@@ -729,16 +739,17 @@ public class QL_BanHang_Panel extends javax.swing.JPanel {
             lb_HienDiemTL.setText(String.valueOf((char) hd.getDiemTichLuy()));
             // Khuyến Mãi
             txt_KhuyenMai.setText(hd.getMa_KM());
+            float GiaTri_KM = QL_KM.getGiaTriKhuyenMaiTheoMa(hd.getMa_KM());
             // Tổng Tiền
             float tongTien = hd.getTongTien();
             lb_HienTongTien_ChuaGiamGia.setText(tongTien + "  VND");
             // Tìn Giam Giá
-            float tienGiam = 0; // Có thể tự tính từ mã khuyến mãi sau
+            float tienGiam = GiaTri_KM; // Có thể tự tính từ mã khuyến mãi sau
             lb_Hien_TienGiamGia.setText(tienGiam + "  VND");
             // Số Điểm Được Cộng
             lb_SoDiemDuocCong.setText(hd.getTichDiem() + "  Điểm");
             // Thành Tiền
-            float thanhTien = tongTien - tienGiam;
+            float thanhTien = tongTien + tienGiam; // - Tien Giam
             lb_ThanhTien.setText(thanhTien + "  VND");
             // Số Tiền Khách Trả
             float tienKhachTra = hd.getSoTienKhachTra_HD();
@@ -785,7 +796,7 @@ public class QL_BanHang_Panel extends javax.swing.JPanel {
                         // Gán nội dung ra panelKM
                         lblMa.setText("🔖 Mã KM: " + km.getMa_KM());
                         lblTen.setText("📢 Tên KM: " + km.getTen_KM());
-                        lblDieuKien.setText("📋 Điều kiện: " + km.getDieuKien_KM());
+                        lblDieuKien.setText("📋 Giá Trị Yêu Cầu: " + km.getGiaTri_YeuCau());
                         lblGiaTri.setText("🎯 Giá trị KM: " + km.getGiaTri_KM() + "%");
 
                         panelKM.setVisible(true);
@@ -879,12 +890,14 @@ public class QL_BanHang_Panel extends javax.swing.JPanel {
             }
 
             // Cảnh báo theo từng mốc
-            if (soLuong == 50) {
-                JOptionPane.showMessageDialog(this, "⚠️ Sản phẩm này đã vượt mức 50.");
+            if (soLuong == 25) {
+                JOptionPane.showMessageDialog(this, "⚠️ Sản phẩm này đã vượt mức 25 sản phẩm.");
             } else if (soLuong == 75) {
-                JOptionPane.showMessageDialog(this, "⚠️ Sản phẩm này đã vượt mức 75.");
+                JOptionPane.showMessageDialog(this, "⚠️ Sản phẩm này đã vượt mức 50 sản phẩm.");
             } else if (soLuong == 100) {
-                JOptionPane.showMessageDialog(this, "⚠️ Sản phẩm này đã vượt mức 100.");
+                JOptionPane.showMessageDialog(this, "⚠️ Sản phẩm này đã vượt mức 75 sản phẩm.");
+            } else if (soLuong == 100) {
+                JOptionPane.showMessageDialog(this, "⚠️ Sản phẩm này đã vượt mức 100 sản phẩm.");
             }
 
             // Tiếp tục xử lý thêm nếu cần...
@@ -1085,6 +1098,137 @@ public class QL_BanHang_Panel extends javax.swing.JPanel {
         JOptionPane.showMessageDialog(null, "✅ Đã cập nhật số lượng thành công!");
     }
 
+    public Hoa_Don_Cho_In_HD getHoaDonDaTao() {
+        Hoa_Don_Cho_In_HD hoaDon = new Hoa_Don_Cho_In_HD();
+
+        // Mã hóa đơn
+        hoaDon.setMa_HD(txt_MaHD.getText().trim());
+
+        // Thời gian in
+        hoaDon.setThoiGian_In_HD(LocalDateTime.now());
+
+        // Địa chỉ cửa hàng
+        hoaDon.setDiaChi("Số 13 Đường Trịnh Văn Bô, Hà Nội"); // hoặc lấy từ cấu hình
+
+        // Logo
+        hoaDon.setLinkAnhLogo("C:\\Users\\ADMIN\\OneDrive\\Documents\\Nghiep\\NetBean_25\\DuAn_TN\\src\\Icon\\Logo_Hoa_Don.png"); // đường dẫn ảnh logo
+//        Image logo = new Image(ImageDataFactory.create(hoaDon.getLinkAnhLogo()));
+//        logo.scaleToFit(120, 60); // co ảnh vừa với khung 120x60 pt
+//        logo.setHorizontalAlignment(HorizontalAlignment.CENTER);
+//        document.add(logo);
+        // Thông tin khách hàng
+        KhachHang_3_O_In_HD kh = new KhachHang_3_O_In_HD();
+        kh.setMa_KhachHang(txt_Ma_KH.getText().trim());
+        kh.setTen_KhachHang(txt_Ten_KH.getText().trim());
+        kh.setSo_DienThoai_KH(txt_Ma_KH.getText().trim());
+        hoaDon.setKhachHang(kh);
+
+        // Thông tin nhân viên
+        // Thông tin nhân viên
+        Tai_Khoan_3_O_In_HD tk = new Tai_Khoan_3_O_In_HD();
+        String maTK = txt_Ma_TK.getText().trim();
+
+        tk.setMa_TaiKhoan(maTK);
+        tk.setTen_TaiKhoan(QL_KH.getTenTaiKhoan(maTK)); // gọi hàm lấy tên từ DB
+        tk.setSoDienThoai_TaiKhoan(QL_KH.getSoDienThoaiTaiKhoan(maTK)); // gọi hàm lấy SDT từ DB
+
+        hoaDon.setTaiKhoan(tk);
+
+        // Danh sách sản phẩm
+        List<ChiTiet_HoaDon_2_O_In_HD> chiTietList = new ArrayList<>();
+        for (int i = 0; i < tbl_Bang_SP_DaChon.getRowCount(); i++) {
+            ChiTiet_HoaDon_2_O_In_HD ct = new ChiTiet_HoaDon_2_O_In_HD();
+
+            SanPham_3_O_In_HD sp = new SanPham_3_O_In_HD();
+            sp.setTen_SP(tbl_Bang_SP_DaChon.getValueAt(i, 1).toString());
+            sp.setDonGia(Float.parseFloat(tbl_Bang_SP_DaChon.getValueAt(i, 2).toString()));
+            ct.setSanPham(sp);
+
+            int soLuong = Integer.parseInt(tbl_Bang_SP_DaChon.getValueAt(i, 3).toString());
+            ct.setSoLuong(soLuong);
+            ct.setThanhTien(sp.getDonGia() * soLuong);
+
+            chiTietList.add(ct);
+        }
+        hoaDon.setChiTietHoaDon(chiTietList);
+
+        // Tổng kết
+        int tongSoLuong = 0;
+        for (ChiTiet_HoaDon_2_O_In_HD ct : chiTietList) {
+            tongSoLuong += ct.getSoLuong();
+        }
+        hoaDon.setTongSoLuongSanPham(tongSoLuong);
+//        hoaDon.setTongSoLuongSanPham(Integer.parseInt(txtTongSoLuong.getText().trim()));
+
+// Làm sạch chuỗi trước khi chuyển đổi
+        hoaDon.setTongTien(Float.parseFloat(lb_HienTongTien_ChuaGiamGia.getText().replaceAll("[^\\d.]", "").trim()));
+        hoaDon.setGiamGia(Float.parseFloat(lb_Hien_TienGiamGia.getText().replaceAll("[^\\d.]", "").trim()));
+        hoaDon.setThanhTienSauGiam(Float.parseFloat(lb_ThanhTien.getText().replaceAll("[^\\d.]", "").trim()));
+
+        // Số điện thoại liên hệ
+        hoaDon.setSoDienThoaiLienHe("0899076903"); // hoặc lấy từ cấu hình
+
+        return hoaDon;
+    }
+
+    private void inHoaDonPDF() {
+        // Kiểm tra xem đã có hóa đơn chưa
+        if (getHoaDonDaTao() == null) {
+            JOptionPane.showMessageDialog(null, "Chưa có hóa đơn để in.");
+            return;
+        }
+
+        try {
+            String filePath = "HoaDon_" + getHoaDonDaTao().getMa_HD() + ".pdf";
+            HoaDon_PDF.HoaDon_PDF(getHoaDonDaTao(), filePath);
+            JOptionPane.showMessageDialog(null, "Đã in hóa đơn ra file: " + filePath);
+
+            // Mở file PDF sau khi in (tuỳ chọn)
+            Desktop.getDesktop().open(new File(filePath));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi in hóa đơn PDF.");
+        }
+    }
+
+    public static String LayBankIdTuTen(String tenNganHang) {
+        switch (tenNganHang.trim().toLowerCase()) {
+            case "vietcombank":
+                return "vietcombank";
+            case "techcombank":
+                return "techcombank";
+            case "vietinbank":
+                return "vietinbank";
+            case "bidv":
+                return "bidv";
+            case "agribank":
+                return "agribank";
+            case "mb bank":
+            case "mbbank":
+                return "mbbank";
+            case "acb":
+                return "acb";
+            case "sacombank":
+                return "sacombank";
+            case "tpbank":
+                return "tpbank";
+            case "vpbank":
+                return "vpbank";
+            default:
+                return "vietcombank"; // mặc định nếu không khớp
+        }
+    }
+
+    public static String taoLinkVietQR(String bankId, String stk, String tenTk, double soTien, String noiDung) throws UnsupportedEncodingException {
+        String baseUrl = "https://img.vietqr.io/image/";
+        String fullUrl = baseUrl
+                + bankId.toLowerCase() + "-" + stk + "-compact2.png"
+                + "?amount=" + (int) soTien
+                + "&addInfo=" + URLEncoder.encode(noiDung, "UTF-8")
+                + "&accountName=" + URLEncoder.encode(tenTk, "UTF-8");
+        return fullUrl;
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -1121,7 +1265,6 @@ public class QL_BanHang_Panel extends javax.swing.JPanel {
         tbtn_HuyTao = new javax.swing.JToggleButton();
         btn__ThanhToan = new javax.swing.JButton();
         btn_ReSet = new javax.swing.JButton();
-        btn_InHoaDon = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         txt_MaHD = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
@@ -1146,7 +1289,6 @@ public class QL_BanHang_Panel extends javax.swing.JPanel {
         jLabel12 = new javax.swing.JLabel();
         rdo_TienMat = new javax.swing.JRadioButton();
         rdo_ChuyenKhoan = new javax.swing.JRadioButton();
-        txt_TimKiem_SP = new javax.swing.JTextField();
 
         ThongTin_HD.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Nhập Thông Tin Hoá Đơn"));
 
@@ -1211,6 +1353,11 @@ public class QL_BanHang_Panel extends javax.swing.JPanel {
 
         tbtn_HuyTao.setBackground(new java.awt.Color(255, 204, 204));
         tbtn_HuyTao.setText("Huỷ Tạo");
+        tbtn_HuyTao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                tbtn_HuyTaoActionPerformed(evt);
+            }
+        });
 
         btn__ThanhToan.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         btn__ThanhToan.setText("Thanh Toán");
@@ -1224,14 +1371,6 @@ public class QL_BanHang_Panel extends javax.swing.JPanel {
         btn_ReSet.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_ReSetActionPerformed(evt);
-            }
-        });
-
-        btn_InHoaDon.setBackground(new java.awt.Color(255, 255, 204));
-        btn_InHoaDon.setText("In Hoá Đơn");
-        btn_InHoaDon.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_InHoaDonActionPerformed(evt);
             }
         });
 
@@ -1270,10 +1409,7 @@ public class QL_BanHang_Panel extends javax.swing.JPanel {
                                 .addGap(29, 29, 29)
                                 .addComponent(lb_HienTongTien_ChuaGiamGia, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(ThongTin_HDLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addGroup(ThongTin_HDLayout.createSequentialGroup()
-                                    .addComponent(btn_InHoaDon, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(btn_ReSet))
+                                .addComponent(btn_ReSet)
                                 .addGroup(javax.swing.GroupLayout.Alignment.LEADING, ThongTin_HDLayout.createSequentialGroup()
                                     .addGap(17, 17, 17)
                                     .addComponent(btn_Tao_HD, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1344,11 +1480,9 @@ public class QL_BanHang_Panel extends javax.swing.JPanel {
                     .addComponent(btn_Tao_HD, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
                     .addComponent(tbtn_HuyTao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btn__ThanhToan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btn__ThanhToan, javax.swing.GroupLayout.DEFAULT_SIZE, 71, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addGroup(ThongTin_HDLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btn_ReSet, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
-                    .addComponent(btn_InHoaDon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(btn_ReSet, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -1382,10 +1516,15 @@ public class QL_BanHang_Panel extends javax.swing.JPanel {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
 
         txt_ThoiGianTao.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        txt_ThoiGianTao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_ThoiGianTaoActionPerformed(evt);
+            }
+        });
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Bảng Danh Sách Hoá đơn"));
 
@@ -1499,7 +1638,7 @@ public class QL_BanHang_Panel extends javax.swing.JPanel {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txt_SoLuong)
+                .addComponent(txt_SoLuong, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btn_Chon_SP, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -1526,8 +1665,6 @@ public class QL_BanHang_Panel extends javax.swing.JPanel {
         btg_HinhThuc_TT.add(rdo_ChuyenKhoan);
         rdo_ChuyenKhoan.setText("Chuyển Khoản");
 
-        txt_TimKiem_SP.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Tìm Kiếm Sản Phẩm"));
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -1538,9 +1675,7 @@ public class QL_BanHang_Panel extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txt_TimKiem_SP, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1590,13 +1725,10 @@ public class QL_BanHang_Panel extends javax.swing.JPanel {
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(txt_TimKiem_SP, javax.swing.GroupLayout.DEFAULT_SIZE, 46, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addComponent(ThongTin_HD, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -1674,10 +1806,51 @@ public class QL_BanHang_Panel extends javax.swing.JPanel {
         float ThanhTienGoc = Float.parseFloat(thanhTienClean);
 
 // 👉 Tách tiền khách trả "130000 VND"
-        String khachTraText = txt_SoTienKhachTra.getText();
-        String khachTraClean = khachTraText.replaceAll("[^\\d.]", "");
-        float SoTien_KhachTra = Float.parseFloat(khachTraClean);
+//        String khachTraText = txt_SoTienKhachTra.getText();
+//        String khachTraClean = khachTraText.replaceAll("[^\\d.]", "");
+//        float SoTien_KhachTra = Float.parseFloat(khachTraClean);
+        // 👉 Lấy và kiểm tra số tiền khách trả
+        String khachTraText = txt_SoTienKhachTra.getText().trim();
 
+        if (khachTraText.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "⚠️ Vui lòng nhập số tiền khách trả.");
+            return;
+        }
+
+        String khachTraClean = khachTraText.replaceAll("[^\\d.]", "");
+        float soTienKhachTra;
+
+        try {
+            soTienKhachTra = Float.parseFloat(khachTraClean);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "❌ Số tiền khách trả không hợp lệ.");
+            return;
+        }
+
+        if (soTienKhachTra <= 0) {
+            JOptionPane.showMessageDialog(null, "❌ Số tiền khách trả phải lớn hơn 0.");
+            return;
+        }
+
+// 👉 Lấy và kiểm tra số tiền cần thanh toán
+        String thanhTienRaw = lb_ThanhTien.getText().replaceAll("[^\\d.]", "");
+        float soTienCanThanhToan;
+
+        try {
+            soTienCanThanhToan = Float.parseFloat(thanhTienRaw);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "❌ Số tiền cần thanh toán không hợp lệ.");
+            return;
+        }
+
+        if (soTienKhachTra < soTienCanThanhToan) {
+            JOptionPane.showMessageDialog(null, "❌ Số tiền khách trả không đủ để thanh toán.");
+            return;
+        }
+
+// ✅ Nếu qua hết kiểm tra thì xử lý thanh toán
+// Gọi hàm xử lý thanh toán ở đây...
+// ✅ Nếu qua hết kiểm tra thì xử lý thanh toán
 // 👉 Mã khuyến mãi
         String Ma_KM = txt_KhuyenMai.getText();
 
@@ -1690,7 +1863,7 @@ public class QL_BanHang_Panel extends javax.swing.JPanel {
         float ThanhTienSauKM = ThanhTienGoc - giaTriKM;
 //        lb_ThanhTien.setText(String.valueOf(ThanhTienSauKM) + "VND");
 // 👉 Tính tiền trả lại
-        float SoTien_CanTra_Lai = SoTien_KhachTra - ThanhTienSauKM;
+        float SoTien_CanTra_Lai = soTienKhachTra - ThanhTienSauKM;
 
 // 👉 Tách số điểm cộng từ "18 điểm"
         String diemText = lb_SoDiemDuocCong.getText();
@@ -1701,7 +1874,7 @@ public class QL_BanHang_Panel extends javax.swing.JPanel {
         boolean ketQua = QL_Tao_HD.thanhToanHoaDon(
                 Ma_HD, Ma_KH,
                 ThanhTienSauKM,
-                SoTien_KhachTra,
+                soTienKhachTra,
                 SoTien_CanTra_Lai,
                 Ma_KM,
                 SoDiem_DuocCong
@@ -1746,27 +1919,61 @@ public class QL_BanHang_Panel extends javax.swing.JPanel {
         if (ketQua) {
             JOptionPane.showMessageDialog(this, "🎉 Thanh toán thành công!");
 
-            String noiDungThanhToan = "Thanh toan hoa don " + Ma_HD;
-
+            String noiDungThanhToan = null;
+//            float SoTien = ThanhTienSauKM;
             // ✅ Chỉ tạo QR nếu chọn Chuyển Khoản
+//            if (rdo_ChuyenKhoan.isSelected()) {
+//                try {
+//                    // 👉 Gọi hàm chuẩn VietQR EMV
+//                    BufferedImage qrImage = Tao_Ma_QR_Core_01.generateVietQR(
+//                            ThanhTienSauKM, // 💰 số tiền
+//                            noiDungThanhToan // 📝 nội dung chuyển khoản
+//                    );
+//
+//                    JFrame qrFrame = new JFrame("Mã QR Thanh Toán");
+//                    qrFrame.setSize(300, 300);
+//                    qrFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//                    qrFrame.setLocationRelativeTo(null);
+//
+//                    JLabel qrLabel = new JLabel(new ImageIcon(qrImage));
+//                    qrFrame.add(qrLabel);
+//                    qrFrame.setVisible(true);
+//
+//                    JOptionPane.showMessageDialog(this, "✅ Mã QR thanh toán đã được tạo!");
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    JOptionPane.showMessageDialog(this, "❌ Lỗi tạo QR: " + e.getMessage());
+//                }
+//            } 
             if (rdo_ChuyenKhoan.isSelected()) {
                 try {
-                    // 👉 Gọi hàm chuẩn VietQR EMV
-                    BufferedImage qrImage = Tao_Ma_QR_Core_01.generateVietQR(
-                            ThanhTienSauKM, // 💰 số tiền
-                            noiDungThanhToan // 📝 nội dung chuyển khoản
-                    );
+                    noiDungThanhToan = "Thanh toan hoa don " + Ma_HD;
+                    double soTien = ThanhTienSauKM;
 
-                    JFrame qrFrame = new JFrame("Mã QR Thanh Toán");
-                    qrFrame.setSize(300, 300);
-                    qrFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                    qrFrame.setLocationRelativeTo(null);
+                    // 👉 Lấy danh sách tài khoản ngân hàng đang hoạt động
+                    QL_NganHang QL_NH = new QL_NganHang();
+                    List<NganHang> danhSachNH = QL_NH.layDanhSachNganHangHoatDong();
 
-                    JLabel qrLabel = new JLabel(new ImageIcon(qrImage));
-                    qrFrame.add(qrLabel);
-                    qrFrame.setVisible(true);
+                    if (danhSachNH.isEmpty()) {
+                        JOptionPane.showMessageDialog(this, "❌ Không có tài khoản ngân hàng hoạt động.");
+                        return;
+                    }
 
-                    JOptionPane.showMessageDialog(this, "✅ Mã QR thanh toán đã được tạo!");
+                    // 👉 Chọn tài khoản đầu tiên (hoặc anh có thể chọn theo logic riêng)
+                    NganHang selectedNH = danhSachNH.get(0);
+
+                    String bankId = LayBankIdTuTen(selectedNH.getTen_NganHang());
+                    String stk = selectedNH.getSo_TaiKhoan();
+                    String tenChuTK = selectedNH.getTen_Chu_TK();
+
+                    // 👉 Tạo link VietQR
+                    String linkQR = taoLinkVietQR(bankId, stk, tenChuTK, soTien, noiDungThanhToan);
+
+                    // 👉 Mở trình duyệt
+                    Desktop.getDesktop().browse(new URI(linkQR));
+
+                    JOptionPane.showMessageDialog(this, "✅ Link QR thanh toán đã được mở!");
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     JOptionPane.showMessageDialog(this, "❌ Lỗi tạo QR: " + e.getMessage());
@@ -1774,7 +1981,6 @@ public class QL_BanHang_Panel extends javax.swing.JPanel {
             } else {
                 JOptionPane.showMessageDialog(this, "💵 Thanh toán tiền mặt - Không cần tạo mã QR.");
             }
-
             Reset();
         } else {
             JOptionPane.showMessageDialog(this, "❌ Thanh toán thất bại. Vui lòng thử lại.");
@@ -1811,13 +2017,47 @@ public class QL_BanHang_Panel extends javax.swing.JPanel {
 
     }//GEN-LAST:event_btn_HuyChon_SPActionPerformed
 
-    private void btn_InHoaDonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_InHoaDonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_InHoaDonActionPerformed
-
     private void txt_Ma_TKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_Ma_TKActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_Ma_TKActionPerformed
+
+    private void tbtn_HuyTaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tbtn_HuyTaoActionPerformed
+        // TODO add your handling code here:
+        int selectedRow = tbl_Bang_HD.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(null, "⚠️ Vui lòng chọn hóa đơn cần xóa.");
+            return;
+        }
+
+        String maHD = tbl_Bang_HD.getValueAt(selectedRow, 0).toString(); // Giả sử cột 0 là MA_HD
+        String trangThai = tbl_Bang_HD.getValueAt(selectedRow, 4).toString(); // Giả sử cột 4 là TRANGTHAI
+
+        if (!trangThai.equalsIgnoreCase("Chưa Thanh Toán")) {
+            JOptionPane.showMessageDialog(null, "❌ Chỉ được xóa hóa đơn chưa thanh toán.");
+            return;
+        }
+
+        int confirm = JOptionPane.showConfirmDialog(null,
+                "Bạn có chắc muốn xóa hóa đơn " + maHD + " không?",
+                "Xác nhận xóa",
+                JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            int result = QL_Tao_HD.xoaHoaDonVaThanhToan(maHD);
+            if (result > 0) {
+                JOptionPane.showMessageDialog(null, "✅ Xóa hóa đơn thành công.");
+                FillToTable_HD();
+                FillToTable_SP_DUOCCHON();// Hàm reload bảng
+            } else {
+                JOptionPane.showMessageDialog(null, "❌ Xóa hóa đơn thất bại.");
+            }
+        }
+    }//GEN-LAST:event_tbtn_HuyTaoActionPerformed
+
+    private void txt_ThoiGianTaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_ThoiGianTaoActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_txt_ThoiGianTaoActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1826,7 +2066,6 @@ public class QL_BanHang_Panel extends javax.swing.JPanel {
     private javax.swing.ButtonGroup btg_TrangThai;
     private javax.swing.JButton btn_Chon_SP;
     private javax.swing.JButton btn_HuyChon_SP;
-    private javax.swing.JButton btn_InHoaDon;
     private javax.swing.JButton btn_ReSet;
     private javax.swing.JButton btn_Sua;
     private javax.swing.JToggleButton btn_Tao_HD;
@@ -1873,6 +2112,5 @@ public class QL_BanHang_Panel extends javax.swing.JPanel {
     private javax.swing.JTextField txt_SoTien_CanTraLai;
     private javax.swing.JTextField txt_Ten_KH;
     private javax.swing.JTextField txt_ThoiGianTao;
-    private javax.swing.JTextField txt_TimKiem_SP;
     // End of variables declaration//GEN-END:variables
 }

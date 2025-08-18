@@ -372,7 +372,7 @@ public class QL_KhachHang {
 
     public int layDiemTichLuy(String maKH) {
         String sql = "SELECT DIEM_TICHLUY FROM KHACHHANG WHERE MA_KH = ?";
-        try  {
+        try {
             Connection conect = conn.DBConnect();
             PreparedStatement stmt = conect.prepareStatement(sql);
             stmt.setString(1, maKH);
@@ -387,5 +387,47 @@ public class QL_KhachHang {
             Logger.getLogger(QL_KhachHang.class.getName()).log(Level.SEVERE, null, ex);
         }
         return 0; // mặc định nếu không có
+    }
+
+    public String getTenTaiKhoan(String maTK) {
+        String tenTaiKhoan = null;
+        String sql = "SELECT TENTAIKHOAN FROM TAIKHOAN WHERE MA_TK = ?";
+
+        try {
+            Connection connection = conn.DBConnect();
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setString(1, maTK);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                tenTaiKhoan = rs.getString("TENTAIKHOAN");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return tenTaiKhoan;
+    }
+
+    public String getSoDienThoaiTaiKhoan(String maTK) {
+        String sdt = null;
+        String sql = "SELECT SDT FROM TAIKHOAN WHERE MA_TK = ?";
+
+        try {
+            Connection connection = conn.DBConnect();
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setString(1, maTK);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                sdt = rs.getString("SDT");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return sdt;
     }
 }

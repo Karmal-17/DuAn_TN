@@ -16,6 +16,9 @@ import java.io.FileOutputStream;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import ToanBo_BanHang.Hoa_Don_Cho_In_HD;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.kernel.font.PdfFont;
+
 public class HoaDon_PDF {
 
     public static void HoaDon_PDF(Hoa_Don_Cho_In_HD hoaDon, String filePath) throws Exception {
@@ -24,9 +27,10 @@ public class HoaDon_PDF {
         Document document = new Document(pdf);
 
         // Font setup
-        var fontNormal = PdfFontFactory.createFont("fonts/arial.ttf", "Identity-H", true);
-        var fontBold = PdfFontFactory.createFont("fonts/arialbd.ttf", "Identity-H", true);
-
+//        PdfFont fontNormal = PdfFontFactory.createFont("Arial", PdfEncodings.IDENTITY_H, false);
+//        PdfFont fontBold = PdfFontFactory.createFont("Arial-Bold", PdfEncodings.IDENTITY_H, false);
+        PdfFont fontNormal = PdfFontFactory.createFont("src/fonts/arial.ttf", PdfEncodings.IDENTITY_H, true);
+        PdfFont fontBold = PdfFontFactory.createFont("src/fonts/arialbd.ttf", PdfEncodings.IDENTITY_H, true);
         // Logo
         if (hoaDon.getLinkAnhLogo() != null && !hoaDon.getLinkAnhLogo().isEmpty()) {
             Image logo = new Image(ImageDataFactory.create(hoaDon.getLinkAnhLogo()));
@@ -45,8 +49,8 @@ public class HoaDon_PDF {
 
         // Thông tin hóa đơn
         document.add(new Paragraph("Mã hóa đơn: " + hoaDon.getMa_HD()).setFont(fontNormal));
-        document.add(new Paragraph("Thời gian in: " +
-                hoaDon.getThoiGianIn().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).setFont(fontNormal));
+        document.add(new Paragraph("Thời gian in: "
+                + hoaDon.getThoiGianIn().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).setFont(fontNormal));
         document.add(new Paragraph("Địa chỉ: " + hoaDon.getDiaChi()).setFont(fontNormal));
         document.add(new Paragraph(" "));
 
@@ -94,8 +98,8 @@ public class HoaDon_PDF {
         document.add(new Paragraph("Fake AL Fresco’s xin cảm ơn quý khách và hẹn gặp lại.")
                 .setFont(fontNormal)
                 .setTextAlignment(TextAlignment.CENTER));
-        document.add(new Paragraph("Có vấn đề gì xin vui lòng liên hệ số điện thoại: " +
-                hoaDon.getSoDienThoaiLienHe()).setFont(fontNormal)
+        document.add(new Paragraph("Có vấn đề gì xin vui lòng liên hệ số điện thoại: "
+                + hoaDon.getSoDienThoaiLienHe()).setFont(fontNormal)
                 .setTextAlignment(TextAlignment.CENTER));
 
         document.close();

@@ -132,6 +132,8 @@ public class QL_SanPham_Tao_JFrame extends javax.swing.JFrame {
 
         // Hiển thị vào textField
         txt_NgayTao_SP.setText(ngayHienTai.format(dinhDang));
+        cbox_TrangThai.setSelectedItem("Đang Bán");
+        txt_MaLSP.setText("");
     }
 
     public void Them_SP() {
@@ -311,40 +313,59 @@ public class QL_SanPham_Tao_JFrame extends javax.swing.JFrame {
         Index = tbl_SanPham.getSelectedRow();
         if (Index >= 0) {
             SanPham sp = qlsp.GetAll_SP().get(Index);
+
             // Mã Sản Phẩm
             txt_Ma_SP.setText(sp.getMa_SP());
+
             // Tên Sản Phẩm
             txt_Ten_SP.setText(sp.getTen_SP());
-            // Đơn Giá Của Sản Phẩm
-            float DonGia = Float.valueOf(sp.getDonGia_SP());
-            txt_DonGia_SP.setText(String.valueOf(DonGia));
-            // Mô Tả Của Sản Phẩm
+
+            // Đơn Giá
+            float DonGia;
+            try {
+                DonGia = sp.getDonGia_SP();
+                txt_DonGia_SP.setText(String.valueOf(DonGia));
+            } catch (NumberFormatException e) {
+                txt_DonGia_SP.setText("0");
+            }
+
+            // Mô Tả
             txt_MoTa_SP.setText(sp.getMoTa_SP());
+
             // Mã Loại Sản Phẩm
             txt_MaLSP.setText(sp.getMa_LSP());
-            // Hình Ảnh Của Sản Phẩm
-            String path = sp.getHinhAnh_SP(); // lấy đường dẫn ảnh từ đối tượng sản phẩm
 
-            File file = new File(path);
-            if (file.exists()) {
-                ImageIcon icon = new ImageIcon(path);
-                Image img = icon.getImage().getScaledInstance(lb_Anh_SP.getWidth(), lb_Anh_SP.getHeight(), Image.SCALE_SMOOTH);
-                lb_Anh_SP.setIcon(new ImageIcon(img));
-                lb_Anh_SP.setText(""); // xóa chữ nếu có
+            // Hình Ảnh
+            String path = sp.getHinhAnh_SP();
+            if (path != null && !path.trim().isEmpty()) {
+                File file = new File(path);
+                if (file.exists()) {
+                    ImageIcon icon = new ImageIcon(path);
+                    Image img = icon.getImage().getScaledInstance(lb_Anh_SP.getWidth(), lb_Anh_SP.getHeight(), Image.SCALE_SMOOTH);
+                    lb_Anh_SP.setIcon(new ImageIcon(img));
+                    lb_Anh_SP.setText("");
+                } else {
+                    lb_Anh_SP.setText("Ảnh không tồn tại");
+                    lb_Anh_SP.setIcon(null);
+                }
             } else {
-                lb_Anh_SP.setText("Ảnh không tồn tại");
+                lb_Anh_SP.setText("Chưa có ảnh");
                 lb_Anh_SP.setIcon(null);
             }
-            // Ngày Tạo Sản Phẩm
-            // Định dạng ngày thành chuỗi dd/MM/yyyy
-            // Thay phần xử lý ngày tạo bằng đoạn này:
-            // Thay phần xử lý ngày tạo bằng đoạn này:
+
+            // Ngày Tạo
             Date ngayTao = sp.getNgayTao_SP();
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             String ngayTaoStr = (ngayTao != null) ? sdf.format(ngayTao) : "NULL";
             txt_NgayTao_SP.setText(ngayTaoStr);
-            // Trạng Thái Của Sản Phẩm
-            cbox_TrangThai.setSelectedItem(sp.getTrangThai_SP());
+
+            // Trạng Thái
+            String trangThai = sp.getTrangThai_SP();
+            if (trangThai != null) {
+                cbox_TrangThai.setSelectedItem(trangThai);
+            } else {
+                cbox_TrangThai.setSelectedIndex(0); // hoặc để trống
+            }
         }
     }
 
@@ -384,8 +405,6 @@ public class QL_SanPham_Tao_JFrame extends javax.swing.JFrame {
         btn_Them_SP = new javax.swing.JButton();
         btn_Sua_SP = new javax.swing.JButton();
         btn_Xoa_SP = new javax.swing.JButton();
-        btn_Nhap_FileExcel = new javax.swing.JButton();
-        btn_Xuat_FileExcel = new javax.swing.JButton();
         btn_DongTrang = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -414,7 +433,7 @@ public class QL_SanPham_Tao_JFrame extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1116, Short.MAX_VALUE)
+            .addComponent(jScrollPane2)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -429,7 +448,7 @@ public class QL_SanPham_Tao_JFrame extends javax.swing.JFrame {
 
         jLabel2.setText("Tên SP:");
 
-        jLabel3.setText("Mô Tả SP:");
+        jLabel3.setText("Mô Tả :");
 
         jLabel4.setText("Đơn Giá:");
 
@@ -609,22 +628,6 @@ public class QL_SanPham_Tao_JFrame extends javax.swing.JFrame {
             }
         });
 
-        btn_Nhap_FileExcel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icon/NhapFlieExcel_NguyenLieu.png"))); // NOI18N
-        btn_Nhap_FileExcel.setText("Nhập File Excel");
-        btn_Nhap_FileExcel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_Nhap_FileExcelActionPerformed(evt);
-            }
-        });
-
-        btn_Xuat_FileExcel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icon/XuatFileExcel_NguyenLieu.png"))); // NOI18N
-        btn_Xuat_FileExcel.setText("Xuất File Excel");
-        btn_Xuat_FileExcel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_Xuat_FileExcelActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout ChucNangChinh_PanelLayout = new javax.swing.GroupLayout(ChucNangChinh_Panel);
         ChucNangChinh_Panel.setLayout(ChucNangChinh_PanelLayout);
         ChucNangChinh_PanelLayout.setHorizontalGroup(
@@ -632,34 +635,24 @@ public class QL_SanPham_Tao_JFrame extends javax.swing.JFrame {
             .addGroup(ChucNangChinh_PanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(ChucNangChinh_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btn_Nhap_FileExcel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btn_Xuat_FileExcel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(ChucNangChinh_PanelLayout.createSequentialGroup()
-                        .addGroup(ChucNangChinh_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(btn_Sua_SP, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btn_LamMoi, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
-                        .addGroup(ChucNangChinh_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btn_Them_SP, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
-                            .addComponent(btn_Xoa_SP, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap())
+                    .addComponent(btn_LamMoi, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_Xoa_SP, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_Sua_SP, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_Them_SP, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         ChucNangChinh_PanelLayout.setVerticalGroup(
             ChucNangChinh_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ChucNangChinh_PanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(ChucNangChinh_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btn_LamMoi, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_Them_SP, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(29, 29, 29)
-                .addGroup(ChucNangChinh_PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btn_Sua_SP, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_Xoa_SP, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(37, 37, 37)
-                .addComponent(btn_Nhap_FileExcel, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
-                .addComponent(btn_Xuat_FileExcel, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(14, 14, 14))
+                .addComponent(btn_LamMoi, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(43, 43, 43)
+                .addComponent(btn_Them_SP, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
+                .addComponent(btn_Sua_SP, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(40, 40, 40)
+                .addComponent(btn_Xoa_SP, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         btn_DongTrang.setText("Đóng Trang");
@@ -673,16 +666,16 @@ public class QL_SanPham_Tao_JFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addGap(34, 34, 34)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(NhapThongTin_Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(ChucNangChinh_Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btn_DongTrang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(btn_DongTrang, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -692,17 +685,15 @@ public class QL_SanPham_Tao_JFrame extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(14, 14, 14)
                         .addComponent(NhapThongTin_Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(20, 20, 20)
-                                .addComponent(ChucNangChinh_Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(btn_DongTrang, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(31, 31, 31)))
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(20, 20, 20)
+                            .addComponent(ChucNangChinh_Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                            .addContainerGap()
+                            .addComponent(btn_DongTrang, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -748,14 +739,6 @@ public class QL_SanPham_Tao_JFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
         ShowDetail();
     }//GEN-LAST:event_tbl_SanPhamMouseClicked
-
-    private void btn_Nhap_FileExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_Nhap_FileExcelActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_Nhap_FileExcelActionPerformed
-
-    private void btn_Xuat_FileExcelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_Xuat_FileExcelActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btn_Xuat_FileExcelActionPerformed
 
     private void btn_DongTrangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_DongTrangActionPerformed
         // TODO add your handling code here:
@@ -807,11 +790,9 @@ public class QL_SanPham_Tao_JFrame extends javax.swing.JFrame {
     private javax.swing.JButton btn_ChonAnh;
     private javax.swing.JButton btn_DongTrang;
     private javax.swing.JButton btn_LamMoi;
-    private javax.swing.JButton btn_Nhap_FileExcel;
     private javax.swing.JButton btn_Sua_SP;
     private javax.swing.JButton btn_Them_SP;
     private javax.swing.JButton btn_Xoa_SP;
-    private javax.swing.JButton btn_Xuat_FileExcel;
     private javax.swing.JComboBox<String> cbox_TrangThai;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

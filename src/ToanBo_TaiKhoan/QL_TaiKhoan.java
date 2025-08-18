@@ -490,4 +490,27 @@ public class QL_TaiKhoan {
         return 0;
     }
 
+    // Lấy Tên Tài Khoản Qua Mã Tài Khoản
+    public static String getTenTaiKhoanTheoMa(String maTK) {
+        String tenTaiKhoan = null;
+        String sql = "SELECT TENTAIKHOAN FROM TAIKHOAN WHERE MA_TK = ?";
+
+        try  {
+            MyConnection conn;
+            conn = new MyConnection();
+            Connection connection = conn.DBConnect();
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setString(1, maTK);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    tenTaiKhoan = rs.getString("TENTAIKHOAN");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // hoặc log lỗi
+        }
+
+        return tenTaiKhoan;
+    }
+
 }

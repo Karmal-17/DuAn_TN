@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package ToanBo_BanHang;
 
 import ToanBo_KhachHang.KhachHang_3_O_In_HD;
@@ -9,10 +5,6 @@ import ToanBo_TaiKhoan.Tai_Khoan_3_O_In_HD;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- *
- * @author ADMIN
- */
 public class Hoa_Don_Cho_In_HD {
 
     private String Ma_HD;
@@ -24,6 +16,11 @@ public class Hoa_Don_Cho_In_HD {
     private String diaChi;
     private String SoDienThoaiLienHe;
     private String LinkAnh_Logo;
+
+    // ✅ Các thuộc tính bổ sung để lưu trữ nếu cần
+    private int tongSoLuongSanPham;
+    private double tongTien;
+    private double thanhTienSauGiam;
 
     public Hoa_Don_Cho_In_HD() {
     }
@@ -115,19 +112,31 @@ public class Hoa_Don_Cho_In_HD {
         this.LinkAnh_Logo = linkAnhLogo;
     }
 
-    // Tính tổng số lượng sản phẩm
+    // ✅ Tổng số lượng sản phẩm (tính động)
     public int getTongSoLuongSanPham() {
         return chiTietHoaDon.stream().mapToInt(ChiTiet_HoaDon_2_O_In_HD::getSoLuong).sum();
     }
 
-    // Tính tổng tiền trước giảm giá
+    // ✅ Setter nếu muốn lưu riêng
+    public void setTongSoLuongSanPham(int tongSoLuongSanPham) {
+        this.tongSoLuongSanPham = tongSoLuongSanPham;
+    }
+
+    // ✅ Tổng tiền trước giảm giá (tính động)
     public double getTongTien() {
         return chiTietHoaDon.stream().mapToDouble(ChiTiet_HoaDon_2_O_In_HD::getThanhTien).sum();
     }
 
-    // Tính thành tiền sau giảm giá
+    public void setTongTien(double tongTien) {
+        this.tongTien = tongTien;
+    }
+
+    // ✅ Thành tiền sau giảm giá (tính động)
     public double getThanhTienSauGiam() {
         return getTongTien() - GiamGia;
     }
 
+    public void setThanhTienSauGiam(double thanhTienSauGiam) {
+        this.thanhTienSauGiam = thanhTienSauGiam;
+    }
 }

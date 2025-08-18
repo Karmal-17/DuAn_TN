@@ -10,6 +10,8 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import javax.swing.JOptionPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -33,8 +35,29 @@ public class QL_Tao_KH extends javax.swing.JFrame {
 
         // Hiển thị vào textField
         txt_NgayTaoKH.setText(ngayHienTai.format(dinhDang));
+        txt_NgayTaoKH.setEditable(false);
+        // Điều Chỉnh Hoạt Động Của Cái Phần Loại KH
+        rdo_KhachThuong.setEnabled(false);
+        rdo_KhachVIP.setEnabled(false);
+        rdo_KhachLuxury.setEnabled(false);
+        // Gắn Sựu Kiện Điểm Tích Luỹ
+        txt_DiemTichLuy.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                int Diem = (Integer) txt_DiemTichLuy.getValue();
+                if (Diem < 50) {
+                    rdo_KhachThuong.setSelected(true);
+                } else if (Diem < 150) {
+                    rdo_KhachVIP.setSelected(true);
+                } else {
+                    rdo_KhachLuxury.setSelected(true);
+                }
+            }
+        });
+        
+        
+        // Tự Động
     }
-
 
     public void LamMoi() {
         // Mã Khách Hàng
@@ -51,34 +74,12 @@ public class QL_Tao_KH extends javax.swing.JFrame {
         btg_LoaiKH.clearSelection();
     }
 
-    public void Them_KH(){
-        // Mã Khách Hàng
-        String Ma_Kh = txt_Ma_KH.getText();
-        if (Ma_Kh.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Mã Khách Hàng Không Được Để Trống.");
-            return;
-        }
-        
-        // Tên Khách Hàng
+    public void Them_KH() {
+        String Ma_KH = txt_Ma_KH.getText();
         String Ten_KH = txt_Ten_KH.getText();
-        if (Ten_KH.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Tên Khách Hàng Không Được Để Trống.");
-            return;
-        }
-        // Số Điện Thoại
-        txt_SDT_KH.setText(Ma_Kh);
-        String SDT = txt_SDT_KH.getText();
-        if (SDT.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Số Điện Thoại Khách Hàng Không Được Để Trống.");
-            return;
-        }
-        
-        String Email_KH = txt_Email_KH.getText();
-        if (Email_KH.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Số Điện Thoại Khách Hàng Không Được Để Trống.");
-            return;
-        }
-        
+        String SDT_KH = txt_SDT_KH.getText();
+
+        // Xử lý ngày tạo khách hàng với kiểm tra lỗi
         Date NgayTao_KH = null;
         try {
             String txtNgayTao = txt_NgayTaoKH.getText();
@@ -93,32 +94,34 @@ public class QL_Tao_KH extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Lỗi xử lý ngày đăng ký: " + e.getMessage());
             return;
         }
-        
-        int DiemTichLuy = (Integer) txt_DiemTichLuy.getValue();
-        String TrangThai = null;
-        if (DiemTichLuy >= 0) {
-            rdo_KhachThuong.setSelected(true);
-            TrangThai = "Khách Thường";
-        } else if (DiemTichLuy >= 100){
-            rdo_KhachVIP.setSelected(true);
-            TrangThai = "Khách VIP";
-        } else {
-            rdo_KhachLuxury.setSelected(true);
-            TrangThai = "Khách Luxury";
-        }
-        
-        KhachHang kh = new KhachHang(Ma_Kh, Ten_KH, SDT, Email_KH, NgayTao_KH, Email_KH, DiemTichLuy);
-        int ReSult = qlkh.Them_KH(kh);
-        if (ReSult == 1) {
-            JOptionPane.showMessageDialog(this, "Thêm Khách Hàng Mới Thành Công.");
-        } else {
-            JOptionPane.showMessageDialog(this, "Thêm Khách Hàng Mới Thất Bại."
-                    + "\n Vui Lòng Kiểm Tra Lại Tất Cả Dư Liệu Khách Hàng Bạn Vừa Nhập Nhé");
+
+        // Xử lý các dữ liệu khác
+        int DiemTichLuy;
+        try {
+            DiemTichLuy = (Integer) txt_DiemTichLuy.getValue();
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Điểm tích lũy phải là số nguyên.");
             return;
         }
-        
-        
+
+        String LoaiKhachHang = rdo_KhachLuxury.isSelected() ? "Khách Luxury"
+                : rdo_KhachVIP.isSelected() ? "Khách VIP"
+                : "Khách Thường";
+
+        String Email = txt_Email_KH.getText();
+
+        // Tạo đối tượng khách hàng
+        KhachHang kh = new KhachHang(Ma_KH, Ten_KH, SDT_KH, Email, NgayTao_KH, LoaiKhachHang, DiemTichLuy);
+
+        // Thêm khách hàng vào hệ thống
+        int Result = qlkh.Them_KH(kh);
+        if (Result == 1) {
+            JOptionPane.showMessageDialog(this, "Thêm Dữ Liệu Khách Hàng Thành Công.");
+        } else {
+            JOptionPane.showMessageDialog(this, "Thêm Dữ Liệu Khách Hàng Thất Bại.\nVui Lòng Kiểm Tra Dữ Liệu Bạn Nhập.");
+        }
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

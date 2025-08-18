@@ -8,6 +8,8 @@ import DBConnect.MyConnection;
 import java.util.List;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -51,15 +53,33 @@ public class QL_Tao_HoaDon {
         return List_HD;
     }
 
+//    public String taoMaHoaDonMoi() {
+//        int soThuTu = Get_All_HoaDon().size() + 1;
+//        String soTiepTheo = String.format("%02d", soThuTu); // "01", "02", ...
+//        return "HD" + soTiepTheo;
+//    }
     public String taoMaHoaDonMoi() {
-        int soThuTu = Get_All_HoaDon().size() + 1;
-        String soTiepTheo = String.format("%02d", soThuTu); // "01", "02", ...
-        return "HD" + soTiepTheo;
+        List<HoaDon> danhSachHD = Get_All_HoaDon();
+        Set<String> maHDHienCo = new HashSet<>();
+
+        for (HoaDon hd : danhSachHD) {
+            maHDHienCo.add(hd.getMa_HD());
+        }
+
+        // Duyệt từ 1 đến vô hạn (hoặc giới hạn lớn)
+        for (int i = 1; i <= Integer.MAX_VALUE; i++) {
+            String maMoi = "HD" + i; // Không định dạng số → HD1, HD2, HD1000,...
+            if (!maHDHienCo.contains(maMoi)) {
+                return maMoi;
+            }
+        }
+
+        throw new RuntimeException("Không thể tạo mã hóa đơn mới.");
     }
 
     public List<HoaDon_6_O> Get_ALL_HoaDon_6_O() {
         List<HoaDon_6_O> List_HD = new ArrayList<>();
-        String SQL = "SELECT MA_HD ,MA_TK ,NGAYLAP, TONGTIEN, HINHTHUC_HD, TRANGTHAI FROM HOADON WHERE TRANGTHAI = N'Chưa Thanh Toán'";
+        String SQL = "SELECT MA_HD , MA_TK ,NGAYLAP, TONGTIEN, HINHTHUC_HD, TRANGTHAI FROM HOADON";
         try {
             Connection connect = conn.DBConnect();
             Statement stm = connect.createStatement();
@@ -323,7 +343,7 @@ public class QL_Tao_HoaDon {
 
         return trangThai;
     }
-    
+
     // Lấy Hoá Đơn Theo
     public List<HoaDon> Get_All_HoaDon_Da_ThanhToan() {
         List<HoaDon> List_HD = new ArrayList<>();
@@ -351,7 +371,7 @@ public class QL_Tao_HoaDon {
         }
         return List_HD;
     }
-    
+
     public Object[] Get_Row_HD_Da_ThanhToan(HoaDon hd) {
         String Ma_HD = hd.getMa_HD();
         String Ma_TK = hd.getMa_TK();
@@ -366,4 +386,112 @@ public class QL_Tao_HoaDon {
         Object[] obj = new Object[]{Ma_HD, Ma_TK, NgayLap_HD, TongTien, HinhThuc_HD, TrangThai, Ma_KM, SoTienKhachTra_HD, Ma_KH, TichDiem};
         return obj;
     }
+
+    // HUỷ Thanh Toán
+    public int xoaHoaDonVaThanhToan(String maHD) {
+        String sqlTT = "DELETE FROM THANHTOAN WHERE MA_HD = ?";
+        String sqlCT = "DELETE FROM CT_HOADON WHERE MA_HD = ?";
+        String sqlHD = "DELETE FROM HOADON WHERE MA_HD = ? AND TRANGTHAI = N'Chưa Thanh Toán'";
+
+        try {
+            Connection connection = conn.DBConnect();
+            PreparedStatement psTT = connection.prepareStatement(sqlTT);
+            PreparedStatement psCT = connection.prepareStatement(sqlCT);
+            PreparedStatement psHD = connection.prepareStatement(sqlHD);
+            connection.setAutoCommit(false); // Bắt đầu transaction
+
+            psTT.setString(1, maHD);
+            psTT.executeUpdate();
+
+            psCT.setString(1, maHD);
+            psCT.executeUpdate();
+
+            psHD.setString(1, maHD);
+            int rows = psHD.executeUpdate();
+
+            connection.commit(); // Xác nhận xóa
+
+            return rows;
+        } catch (Exception e) {
+            System.out.println("❌ Lỗi xóa hóa đơn và thanh toán: " + e.getMessage());
+            return 0;
+        }
+    }
+
+    public List<HoaDon> locHoaDonTheoHinhThuc(String hinhThucHD) {
+        List<HoaDon> danhSach = new ArrayList<>();
+        String sql = "SELECT \n"
+                + "MA_HD , MA_TK , NGAYLAP ,TONGTIEN,  HINHTHUC_HD , TRANGTHAI , MA_KM , SOTIEN_KHACHTRA\n"
+                + ", MA_KH , TICHDIEM\n"
+                + "FROM HOADON WHERE TRANGTHAI = N'Đã Thanh Toán' AND HINHTHUC_HD = ?";
+        try {
+            Connection connection = conn.DBConnect();
+            PreparedStatement ps = connection.prepareStatement(sql);
+
+            ps.setString(1, hinhThucHD);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                HoaDon hd = new HoaDon();
+                hd.setMa_HD(rs.getString("MA_HD"));
+                hd.setMa_TK(rs.getString("MA_TK"));
+                hd.setNgayLap_HD(rs.getDate("NGAYLAP"));
+                hd.setTongTien(rs.getFloat("TONGTIEN"));
+                hd.setHinhThuc_HD(rs.getString("HINHTHUC_HD"));
+                hd.setTrangThai(rs.getString("TRANGTHAI"));
+                hd.setMa_KM(rs.getString("MA_KM"));
+                hd.setSoTienKhachTra_HD(rs.getFloat("SOTIEN_KHACHTRA"));
+                hd.setMa_KH(rs.getString("MA_KH"));
+                hd.setTichDiem(rs.getInt("TICHDIEM"));
+
+                danhSach.add(hd);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(QL_Tao_HoaDon.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return danhSach;
+    }
+
+    public List<HoaDon> locHoaDonTheoThoiGian(Date ngayBatDau, Date ngayKetThuc) {
+        List<HoaDon> danhSach = new ArrayList<>();
+        String sql = "SELECT \n"
+                + "MA_HD , MA_TK , NGAYLAP ,TONGTIEN,  HINHTHUC_HD , TRANGTHAI , MA_KM , SOTIEN_KHACHTRA\n"
+                + ", MA_KH , TICHDIEM\n"
+                + "FROM HOADON WHERE TRANGTHAI = N'Đã Thanh Toán' AND NGAYLAP BETWEEN ? AND ?";
+
+        try {
+            Connection connection = conn.DBConnect();
+            PreparedStatement ps = connection.prepareStatement(sql);
+
+            ps.setDate(1, new java.sql.Date(ngayBatDau.getTime()));
+            ps.setDate(2, new java.sql.Date(ngayKetThuc.getTime()));
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                HoaDon hd = new HoaDon();
+                hd.setMa_HD(rs.getString("MA_HD"));
+                hd.setMa_TK(rs.getString("MA_TK"));
+                hd.setNgayLap_HD(rs.getDate("NGAYLAP"));
+                hd.setTongTien(rs.getFloat("TONGTIEN"));
+                hd.setHinhThuc_HD(rs.getString("HINHTHUC_HD"));
+                hd.setTrangThai(rs.getString("TRANGTHAI"));
+                hd.setMa_KM(rs.getString("MA_KM"));
+                hd.setSoTienKhachTra_HD(rs.getFloat("SOTIEN_KHACHTRA"));
+                hd.setMa_KH(rs.getString("MA_KH"));
+                hd.setTichDiem(rs.getInt("TICHDIEM"));
+
+                danhSach.add(hd);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(QL_Tao_HoaDon.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return danhSach;
+    }
+
 }

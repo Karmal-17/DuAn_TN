@@ -14,6 +14,9 @@ public class SanPham_3_O_In_HD {
     private String Ten_SP;
     private float DonGia;
 
+    public SanPham_3_O_In_HD() {
+    }
+
     public SanPham_3_O_In_HD(String Ma_SP, String Ten_SP, float DonGia) {
         this.Ma_SP = Ma_SP;
         this.Ten_SP = Ten_SP;
@@ -32,4 +35,18 @@ public class SanPham_3_O_In_HD {
     public float getDonGia() {
         return DonGia;
     }
+
+    public void setMa_SP(String Ma_SP) {
+        this.Ma_SP = Ma_SP;
+    }
+
+    public void setTen_SP(String Ten_SP) {
+        this.Ten_SP = Ten_SP;
+    }
+
+    public void setDonGia(float DonGia) {
+        this.DonGia = DonGia;
+    }
+    
+    
 }

@@ -25,6 +25,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.awt.Color;
+
 /**
  *
  * @author ADMIN
@@ -48,7 +49,7 @@ public class QL_Tao_NguyenLieu_JFrame extends javax.swing.JFrame {
 
         // Hiển thị vào textField
         txt_NgayNhap.setText(ngayHienTai.format(dinhDang));
-        txt_NgayNhap.setEnabled(false);
+        txt_NgayNhap.setEditable(false);
     }
 
     public void Initable() {
@@ -547,8 +548,6 @@ public class QL_Tao_NguyenLieu_JFrame extends javax.swing.JFrame {
         txt_NgayNhap.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         ChuaAnh_Panel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
-        lb_HienAnh.setText("jLabel7");
 
         javax.swing.GroupLayout ChuaAnh_PanelLayout = new javax.swing.GroupLayout(ChuaAnh_Panel);
         ChuaAnh_Panel.setLayout(ChuaAnh_PanelLayout);

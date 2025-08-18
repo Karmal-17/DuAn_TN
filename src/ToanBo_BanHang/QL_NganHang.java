@@ -137,4 +137,33 @@ public class QL_NganHang {
         return false;
     }
 
+    // Lấy Danh Sách Ngân Hàng
+    public List<NganHang> layDanhSachNganHangHoatDong() {
+        List<NganHang> danhSach = new ArrayList<>();
+        String sql = "SELECT SOTAIKHOAN_NH, TEN_NH, TEN_CHU_NH FROM NGANHANG WHERE TRANGTHAI = N'Hoạt Động'";
+
+        try {
+            Connection connection = conn.DBConnect();
+            PreparedStatement ps = connection.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                String soTK = rs.getString("SOTAIKHOAN_NH");
+                String tenNH = rs.getString("TEN_NH");
+                String tenChu = rs.getString("TEN_CHU_NH");
+
+                NganHang nh = new NganHang();
+                nh.setSo_TaiKhoan(soTK);
+                nh.setTen_NganHang(tenNH);
+                nh.setTen_Chu_TK(tenChu);
+
+                danhSach.add(nh);
+            }
+
+        } catch (Exception e) {
+            System.out.println("❌ Lỗi khi lấy danh sách ngân hàng hoạt động: " + e.getMessage());
+        }
+
+        return danhSach;
+    }
+
 }

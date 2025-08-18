@@ -322,7 +322,7 @@ public class QL_KhuyenMai {
     // Lấy 4 ô
     public List<KhuyenMai_4_O> TK_KhuyenMai(String tuKhoa) {
         List<KhuyenMai_4_O> list_KM = new ArrayList<>();
-        String SQL = "SELECT MA_KM, TENKM, DIEUKIEN, GIATRI FROM KHUYENMAI WHERE MA_KM LIKE ? OR TENKM LIKE ?";
+        String SQL = "SELECT MA_KM, TENKM, GIATRI_YEUCAU_KM, GIATRI FROM KHUYENMAI WHERE MA_KM LIKE ? OR TENKM LIKE ?";
 
         try {
             Connection con = conn.DBConnect();
@@ -334,9 +334,9 @@ public class QL_KhuyenMai {
             while (rs.next()) {
                 String ma = rs.getString("MA_KM");
                 String ten = rs.getString("TENKM");
-                String dieuKien = rs.getString("DIEUKIEN");
+                float GiaTri_YeuCau = rs.getFloat("GIATRI_YEUCAU_KM");
                 float giaTri = rs.getFloat("GIATRI");
-                KhuyenMai_4_O km_4o = new KhuyenMai_4_O(ma, ten, dieuKien, giaTri);
+                KhuyenMai_4_O km_4o = new KhuyenMai_4_O(ma, ten, GiaTri_YeuCau, giaTri);
                 list_KM.add(km_4o);
             }
         } catch (Exception e) {
@@ -347,12 +347,14 @@ public class QL_KhuyenMai {
 
     public List<KhuyenMai_4_O> getKhuyenMaiTheoMa(String tuKhoa) {
         List<KhuyenMai_4_O> ds = new ArrayList<>();
-        String sql = "SELECT MA_KM, TENKM, DIEUKIEN, GIATRI "
+        String sql = "SELECT MA_KM, TENKM, GIATRI_YEUCAU_KM, GIATRI "
                 + "FROM KHUYENMAI "
                 + "WHERE MA_KM LIKE ? OR TENKM LIKE ? "
                 + "ORDER BY TENKM ASC";
 
-        try (Connection con = conn.DBConnect(); PreparedStatement pst = con.prepareStatement(sql)) {
+        try  {
+            Connection connection = conn.DBConnect();
+            PreparedStatement pst = connection.prepareStatement(sql);
 
             String keyword = "%" + tuKhoa + "%";
             pst.setString(1, keyword);
@@ -363,7 +365,7 @@ public class QL_KhuyenMai {
                 KhuyenMai_4_O km = new KhuyenMai_4_O(
                         rs.getString("MA_KM"),
                         rs.getString("TENKM"),
-                        rs.getString("DIEUKIEN"),
+                        rs.getFloat("GIATRI_YEUCAU_KM"),
                         rs.getFloat("GIATRI")
                 );
                 ds.add(km);
@@ -376,7 +378,7 @@ public class QL_KhuyenMai {
 
     public List<KhuyenMai_4_O> LayThongtin_KM() {
         List<KhuyenMai_4_O> List_ds = new ArrayList<>();
-        String SQL = "SELECT MA_KM, TEN_KM, DIEUKIEN, GIATRI FROM KHUYENMAI";
+        String SQL = "SELECT MA_KM, TEN_KM, GIATRI_YEUCAU_KM, GIATRI FROM KHUYENMAI";
 
         try {
             Connection con = conn.DBConnect();
@@ -385,10 +387,10 @@ public class QL_KhuyenMai {
             while (rs.next()) {
                 String ma = rs.getString("MA_KM");
                 String ten = rs.getString("TEN_KM");
-                String dieuKien = rs.getString("DIEUKIEN");
+                float GiaTri_YeuCau = rs.getFloat("GIATRI_YEUCAU_KM");
                 float giaTri = rs.getFloat("GIATRI");
 
-                List_ds.add(new KhuyenMai_4_O(ma, ten, dieuKien, giaTri));
+                List_ds.add(new KhuyenMai_4_O(ma, ten, GiaTri_YeuCau, giaTri));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -639,4 +641,28 @@ public class QL_KhuyenMai {
 
         return GiaTri_KM;
     }
+
+    // Lấy Giá Trị Khuyến Mãi Theo Mã Khuyến Mãi Không Dùng Biến
+    public static Float getGiaTriKhuyenMaiTheoMa(String maKM) {
+        Float giaTri = null;
+        String sql = "SELECT GIATRI FROM KHUYENMAI WHERE MA_KM = ?";
+
+        try {
+            MyConnection conn;
+            conn = new MyConnection();
+            Connection connection = conn.DBConnect();
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setString(1, maKM);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    giaTri = rs.getFloat("GIATRI");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // hoặc log lỗi
+        }
+
+        return giaTri;
+    }
+
 }

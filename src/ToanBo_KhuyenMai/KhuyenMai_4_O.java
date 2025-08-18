@@ -12,16 +12,16 @@ public class KhuyenMai_4_O {
 
     private String Ma_KM;
     private String Ten_KM;
-    private String DieuKien_KM;
+    private float GiaTri_YeuCau_KM;
     private float GiaTri_KM;
 
     public KhuyenMai_4_O() {
     }
 
-    public KhuyenMai_4_O(String Ma_KM, String Ten_KM, String DieuKien_KM, float GiaTri_KM) {
+    public KhuyenMai_4_O(String Ma_KM, String Ten_KM, float GiaTri_YeuCau_KM, float GiaTri_KM) {
         this.Ma_KM = Ma_KM;
         this.Ten_KM = Ten_KM;
-        this.DieuKien_KM = DieuKien_KM;
+        this.GiaTri_YeuCau_KM = GiaTri_YeuCau_KM;
         this.GiaTri_KM = GiaTri_KM;
     }
 
@@ -41,12 +41,12 @@ public class KhuyenMai_4_O {
         this.Ten_KM = Ten_KM;
     }
 
-    public String getDieuKien_KM() {
-        return DieuKien_KM;
+    public float getGiaTri_YeuCau() {
+        return GiaTri_YeuCau_KM;
     }
 
-    public void setDieuKien_KM(String DieuKien_KM) {
-        this.DieuKien_KM = DieuKien_KM;
+    public void setGiaTri_YeuCau_KM(float GiaTri_YeuCau_KM) {
+        this.GiaTri_YeuCau_KM = GiaTri_YeuCau_KM;
     }
 
     public float getGiaTri_KM() {

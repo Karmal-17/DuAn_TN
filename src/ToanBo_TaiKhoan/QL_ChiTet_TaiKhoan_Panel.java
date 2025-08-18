@@ -212,8 +212,6 @@ public class QL_ChiTet_TaiKhoan_Panel extends javax.swing.JPanel {
         rdo_QuanLy = new javax.swing.JRadioButton();
         jPanel1 = new javax.swing.JPanel();
         btn_Tao_TatCa_TK = new javax.swing.JButton();
-        btn_ShowChiTiet_TaiKhoan = new javax.swing.JButton();
-        btn_XuatDanhSach = new javax.swing.JButton();
         btn_ReSet = new javax.swing.JButton();
 
         Chua_Table_Panel.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), "Bảng Danh Sách Tài Khoản"));
@@ -350,10 +348,6 @@ public class QL_ChiTet_TaiKhoan_Panel extends javax.swing.JPanel {
             }
         });
 
-        btn_ShowChiTiet_TaiKhoan.setText("Chi Tiết Tài Khoản");
-
-        btn_XuatDanhSach.setText("Xuất Danh Sách");
-
         btn_ReSet.setText("ReSet");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -363,11 +357,7 @@ public class QL_ChiTet_TaiKhoan_Panel extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(btn_Tao_TatCa_TK, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(37, 37, 37)
-                .addComponent(btn_ShowChiTiet_TaiKhoan, javax.swing.GroupLayout.PREFERRED_SIZE, 177, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
-                .addComponent(btn_XuatDanhSach, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(37, 37, 37)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btn_ReSet, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(21, 21, 21))
         );
@@ -375,9 +365,7 @@ public class QL_ChiTet_TaiKhoan_Panel extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btn_ShowChiTiet_TaiKhoan, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_Tao_TatCa_TK, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_XuatDanhSach, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_ReSet, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -393,7 +381,7 @@ public class QL_ChiTet_TaiKhoan_Panel extends javax.swing.JPanel {
                     .addComponent(Chua_Table_Panel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(TimKiemTheoTen_Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 204, Short.MAX_VALUE)
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -454,9 +442,7 @@ public class QL_ChiTet_TaiKhoan_Panel extends javax.swing.JPanel {
     private javax.swing.JPanel TimKiemTheoTen_Panel;
     private javax.swing.ButtonGroup btg_VaiTro;
     private javax.swing.JButton btn_ReSet;
-    private javax.swing.JButton btn_ShowChiTiet_TaiKhoan;
     private javax.swing.JButton btn_Tao_TatCa_TK;
-    private javax.swing.JButton btn_XuatDanhSach;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
