@@ -71,6 +71,11 @@ public class QL_KhachHang_JFrame extends javax.swing.JFrame {
             }
         });
 
+        // Check Spinner 
+        SpinnerNumberModel Diem_TL_SPN = new SpinnerNumberModel(0, 0, 1000, 1);
+        txt_DiemTichLuy.setModel(Diem_TL_SPN);
+        
+        // Mã Khách Hàng
         txt_Ma_KH.getDocument().addDocumentListener(new DocumentListener() {
             public void insertUpdate(DocumentEvent e) {
                 capNhatSDT();

@@ -67,39 +67,7 @@ public class Tao_Ma_QR extends javax.swing.JFrame {
         DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>(danhSachNganHang);
         cbox_Ten_Ngan_Hang.setModel(model);
 
-//        btn_TaoMa_QR.addActionListener(new ActionListener() {
-//            public void actionPerformed(ActionEvent e) {
-//                try {
-//                    String soTK = txt_SoTaiKhoan.getText().trim();
-//                    String tenNH = cbox_Ten_Ngan_Hang.getSelectedItem().toString().trim();
-//                    String soTien = txt_SoTien.getText().trim();
-//
-//                    // Kiểm tra dữ liệu hợp lệ
-//                    if (soTK.isEmpty() || tenNH.isEmpty() || soTien.isEmpty()) {
-//                        JOptionPane.showMessageDialog(null, "Vui lòng nhập đầy đủ thông tin.");
-//                        return;
-//                    }
-//
-//                    double amount = Double.parseDouble(soTien);
-//
-//                    String memo = "Thanh toan hoa don";
-//                    String qrContent = String.format(
-//                            "vietqr://%s?acc=%s&name=%s&amount=%.0f&memo=%s",
-//                            tenNH.toLowerCase().replaceAll(" ", ""), // tên ngân hàng dạng chuẩn, không dấu cách
-//                            soTK,
-//                            "TEN+CHU+TK", // hoặc cho phép nhập thêm
-//                            amount,
-//                            memo.replace(" ", "+")
-//                    );
-//
-//                    BufferedImage qrImage = generateQRImage(qrContent);
-//                    lb_HienMa_QR.setIcon(new ImageIcon(qrImage));
-//                } catch (Exception ex) {
-//                    ex.printStackTrace();
-//                    JOptionPane.showMessageDialog(null, "Lỗi khi tạo mã QR!");
-//                }
-//            }
-//        });
+        // Chuyền Vào Nút Tạo Mã Ngân Hàng
         btn_TaoMa_QR.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {

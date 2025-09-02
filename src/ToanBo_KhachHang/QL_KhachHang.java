@@ -5,7 +5,6 @@
 package ToanBo_KhachHang;
 
 import DBConnect.MyConnection;
-import ToanBo_KhachHang.KhachHang;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.*;

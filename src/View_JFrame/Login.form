@@ -70,8 +70,8 @@
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="55" max="-2" attributes="0"/>
-                          <Component id="btn_DangNhap" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="74" max="-2" attributes="0"/>
+                          <Component id="btn_DangNhap" min="-2" pref="151" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="66" max="-2" attributes="0"/>
                           <Component id="bt_Cannel" min="-2" pref="137" max="-2" attributes="0"/>
                       </Group>
                   </Group>
